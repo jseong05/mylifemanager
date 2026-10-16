@@ -1,0 +1,98 @@
+<resources>
+    <string name="app_name">마이 라이프 메니저</string>
+    <string name="action_settings">설정</string>
+
+    <!-- 메인 대시보드 -->
+    <string name="welcome_message">반가워요, 사용자님!</string>
+    <string name="today_expense">오늘 지출: 0원</string>
+    <string name="current_balance">현재 잔액</string>
+    <string name="settings_content_description">설정</string>
+    <string name="d_day_message">용돈 받는 날까지 D-15</string>
+    <string name="daily_recommended_message">오늘 권장 지출액: 5,000원</string>
+    <string name="today_schedule_title">오늘의 일정 (0)</string>
+    <string name="recent_expense_title">최근 내역</string>
+    <string name="empty_schedule">오늘 등록된 일정이 없어요</string>
+    <string name="empty_expense">최근 내역이 없어요</string>
+    <string name="btn_manage_schedule">+ 일정 관리</string>
+    <string name="btn_add_expense">+ 가계부</string>
+
+    <!-- 하단 네비게이션 -->
+    <string name="nav_home">홈</string>
+    <string name="nav_expense">가계부</string>
+    <string name="nav_schedule">계획표</string>
+
+    <!-- 일정 화면 -->
+    <string name="schedule_title">나의 계획표</string>
+    <string name="schedule_empty">등록된 일정이 없어요\n+ 버튼을 눌러 추가해 보세요</string>
+    <string name="add_schedule">일정 추가</string>
+
+    <!-- 가계부 화면 -->
+    <string name="expense_title">지출/수입 내역</string>
+    <string name="expense_empty">등록된 내역이 없어요\n+ 버튼을 눌러 추가해 보세요</string>
+    <string name="add_expense">내역 추가</string>
+
+    <!-- 내역 추가 다이얼로그 -->
+    <string name="hint_expense_title">내역 (예: 점심 식사)</string>
+    <string name="hint_expense_amount">금액 (예: 10000)</string>
+    <string name="label_expense">지출</string>
+    <string name="label_income">수입</string>
+    <string name="label_waste">이건 \'낭비\'였나요? (낭비 챌린지)</string>
+
+    <!-- 설정 화면 -->
+    <string name="settings_title">설정</string>
+    <string name="section_profile">프로필 정보</string>
+    <string name="section_allowance">용돈 설정</string>
+    <string name="hint_user_name">이름을 입력하세요 (예: 홍길동)</string>
+    <string name="hint_balance">현재 잔액 (예: 50000)</string>
+    <string name="hint_allowance_amount">지급할 용돈 금액 (예: 100000)</string>
+    <string name="label_allowance_cycle">용돈 지급 주기</string>
+    <string name="label_monthly">월간</string>
+    <string name="label_weekly">주간</string>
+    <string name="label_weekly_day">지급 요일 선택</string>
+    <string name="label_monthly_day">지급 날짜(일) 선택</string>
+    <string name="btn_save_settings">저장하기</string>
+    <string name="btn_reset_data">모든 데이터 초기화</string>
+    <string name="dialog_reset_title">전체 데이터 초기화</string>
+    <string name="dialog_reset_message">정말 모든 데이터를 초기화하시겠습니까?\n삭제된 데이터는 복구할 수 없습니다.</string>
+    <string name="btn_reset_confirm">초기화</string>
+
+    <string name="section_weather">날씨 및 위치 설정</string>
+    <string name="label_use_gps">GPS 기반 자동 위치 사용</string>
+    <string name="label_select_city">수동 위치 선택</string>
+
+    <string-array name="week_days">
+        <item>일요일</item>
+        <item>월요일</item>
+        <item>화요일</item>
+        <item>수요일</item>
+        <item>목요일</item>
+        <item>금요일</item>
+        <item>토요일</item>
+    </string-array>
+
+    <string-array name="cities_display">
+        <item>서울</item>
+        <item>부산</item>
+        <item>인천</item>
+        <item>대구</item>
+        <item>대전</item>
+        <item>광주</item>
+        <item>울산</item>
+        <item>수원</item>
+        <item>세종</item>
+        <item>제주</item>
+    </string-array>
+
+    <string-array name="cities_value">
+        <item>Seoul</item>
+        <item>Busan</item>
+        <item>Incheon</item>
+        <item>Daegu</item>
+        <item>Daejeon</item>
+        <item>Gwangju</item>
+        <item>Ulsan</item>
+        <item>Suwon</item>
+        <item>Sejong</item>
+        <item>Jeju</item>
+    </string-array>
+</resources>

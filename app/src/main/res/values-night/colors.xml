@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Material3 Dark Palette -->
+    <color name="primary">#80D5D4</color>
+    <color name="onPrimary">#003737</color>
+    <color name="primaryContainer">#004F4F</color>
+    <color name="onPrimaryContainer">#9CF1F0</color>
+
+    <color name="secondary">#B0CCCB</color>
+    <color name="onSecondary">#1B3534</color>
+    <color name="secondaryContainer">#324B4A</color>
+    <color name="onSecondaryContainer">#CCE8E7</color>
+
+    <color name="tertiary">#B1C5FF</color>
+    <color name="onTertiary">#142F5F</color>
+    <color name="tertiaryContainer">#2D4476</color>
+    <color name="onTertiaryContainer">#D8E2FF</color>
+
+    <color name="error">#FFB4AB</color>
+    <color name="onError">#690005</color>
+    <color name="errorContainer">#93000A</color>
+    <color name="onErrorContainer">#FFDAD6</color>
+
+    <color name="background">#191C1C</color>
+    <color name="onBackground">#E0E3E2</color>
+    <color name="surface">#191C1C</color>
+    <color name="onSurface">#E0E3E2</color>
+    <color name="surfaceVariant">#3F4948</color>
+    <color name="onSurfaceVariant">#BEC9C8</color>
+
+    <color name="outline">#899392</color>
+    <color name="outlineVariant">#3F4948</color>
+
+    <color name="inverseSurface">#E0E3E2</color>
+    <color name="inverseOnSurface">#2D3131</color>
+    <color name="inversePrimary">#006A6A</color>
+    <color name="scrim">#000000</color>
+</resources>

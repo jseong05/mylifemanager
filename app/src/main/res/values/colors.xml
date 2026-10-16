@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 기존 -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Material3 Light Palette (Teal) -->
+    <color name="primary">#006A6A</color>
+    <color name="onPrimary">#FFFFFF</color>
+    <color name="primaryContainer">#9CF1F0</color>
+    <color name="onPrimaryContainer">#002020</color>
+
+    <color name="secondary">#4A6363</color>
+    <color name="onSecondary">#FFFFFF</color>
+    <color name="secondaryContainer">#CCE8E7</color>
+    <color name="onSecondaryContainer">#051F1F</color>
+
+    <color name="tertiary">#4B5F92</color>
+    <color name="onTertiary">#FFFFFF</color>
+    <color name="tertiaryContainer">#D8E2FF</color>
+    <color name="onTertiaryContainer">#001B3E</color>
+
+    <color name="error">#BA1A1A</color>
+    <color name="onError">#FFFFFF</color>
+    <color name="errorContainer">#FFDAD6</color>
+    <color name="onErrorContainer">#410002</color>
+
+    <color name="background">#FAFDFC</color>
+    <color name="onBackground">#191C1C</color>
+    <color name="surface">#FAFDFC</color>
+    <color name="onSurface">#191C1C</color>
+    <color name="surfaceVariant">#DAE5E4</color>
+    <color name="onSurfaceVariant">#3F4948</color>
+
+    <color name="outline">#6F7979</color>
+    <color name="outlineVariant">#BEC9C8</color>
+
+    <color name="inverseSurface">#2D3131</color>
+    <color name="inverseOnSurface">#EFF1F0</color>
+    <color name="inversePrimary">#80D5D4</color>
+    <color name="scrim">#000000</color>
+</resources>
