@@ -15,7 +15,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import com.mlm.databinding.ActivityMainBinding;
-
+import androidx.activity.OnBackPressedCallback; // 10/23 뒤로가기 콜백
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -25,6 +25,7 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
+    private long backKeyPressedTime = 0; // 10/23 뒤로가기 버튼 누른 시각 저장
     private ActivityMainBinding binding;
     private MyDataStore dataManager;
     private ScheduleAdapter sAdapter;
@@ -143,8 +144,24 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             overridePendingTransition(0, 0);
         });
-    }
 
+        // 10/23
+        // 메인 화면에서 뒤로가기 버튼 2번 누르면 앱 종료 처리
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (System.currentTimeMillis() > backKeyPressedTime + 2000) { // 2sec 이내로 다시 누르지 않을 경우
+                    backKeyPressedTime = System.currentTimeMillis();
+                    Toast.makeText(MainActivity.this, "뒤로가기 버튼을 한번 더 누르면 앱이 종료 됩니다.", Toast.LENGTH_SHORT).show(); // 메시지 띄우기
+                    return;
+                }
+                // 2sec 안에 누르면 앱이 종료됨.
+                if (System.currentTimeMillis() <= backKeyPressedTime + 2000) {
+                    finish();
+                }
+            }
+        });
+    }
     @Override
     public void finish() {
         super.finish();
