@@ -18,16 +18,21 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.마이라이프메니저">
         <activity
-            android:name=".MainActivity"
+            android:name=".SplashActivity"
             android:exported="true"
-            android:theme="@style/Theme.마이라이프메니저"
-            android:windowSoftInputMode="adjustResize">
+            android:theme="@style/Theme.마이라이프메니저">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="false"
+            android:theme="@style/Theme.마이라이프메니저"
+            android:windowSoftInputMode="adjustResize" />
         <activity android:name=".ExpenseActivity" />
         <activity android:name=".ScheduleActivity" />
         <activity android:name=".SettingsActivity" />

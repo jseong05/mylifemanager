@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+
+    <!-- 달력 배경 (연한 파란색 카드) -->
+    <path
+        android:fillColor="#E3F2FD"
+        android:pathData="M30,25 h55 a8,8 0 0,1 8,8 v50 a8,8 0 0,1 -8,8 h-55 a8,8 0 0,1 -8,-8 v-50 a8,8 0 0,1 8,-8 z" />
+
+    <!-- 달력 상단 헤더 (파란색 바) -->
+    <path
+        android:fillColor="#1E88E5"
+        android:pathData="M30,25 h55 a8,8 0 0,1 8,8 v12 h-71 v-12 a8,8 0 0,1 8,-8 z" />
+
+    <!-- 달력 고리 2개 -->
+    <path
+        android:fillColor="#42A5F5"
+        android:pathData="M38,18 h6 v12 h-6 z M70,18 h6 v12 h-6 z" />
+
+    <!-- 달력 숫자 '1' -->
+    <path
+        android:fillColor="#1565C0"
+        android:pathData="M60,52 h-4 v18 h4 z M52,56 l4,-4 v4 z" />
+
+    <!-- 앞쪽 동전 (황금색 ₩) -->
+    <path
+        android:fillColor="#FFCA28"
+        android:pathData="M32,40 A22,22 0 1,0 32,84 A22,22 0 1,0 32,40 Z" />
+
+    <!-- 동전 테두리 및 ₩ 표식 -->
+    <path
+        android:fillColor="#FFB300"
+        android:pathData="M32,44 A18,18 0 1,0 32,80 A18,18 0 1,0 32,44 Z M32,40 A22,22 0 1,1 32,84 A22,22 0 1,1 32,40 Z" />
+
+    <path
+        android:fillColor="#FFE082"
+        android:pathData="M24,55 l4,12 h2 l3,-8 l3,8 h2 l4,-12 h-3 l-2.5,8 l-3,-8 h-2 l-3,8 l-2.5,-8 z M22,60 h20 v2 h-20 z M22,64 h20 v2 h-20 z" />
+</vector>
