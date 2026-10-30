@@ -44,12 +44,12 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
-            <CalendarView
+            <com.prolificinteractive.materialcalendarview.MaterialCalendarView
                 android:id="@+id/calendarView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:dateTextAppearance="@style/TextAppearance.Material3.BodyMedium"
-                android:weekDayTextAppearance="@style/TextAppearance.Material3.BodySmall" />
+                app:mcv_selectionColor="?attr/colorPrimaryContainer"
+                app:mcv_showOtherDates="all" />
         </com.google.android.material.card.MaterialCardView>
 
         <!-- 빈 상태 (기본 숨김) -->

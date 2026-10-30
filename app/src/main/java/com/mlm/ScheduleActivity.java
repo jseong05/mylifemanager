@@ -20,12 +20,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.core.content.ContextCompat;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
 import com.mlm.databinding.ActivityScheduleBinding;
+import com.prolificinteractive.materialcalendarview.CalendarDay;
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -83,13 +86,16 @@ public class ScheduleActivity extends AppCompatActivity {
         binding.rvScheduleList.setAdapter(adapter);
 
         // 상시 달력 날짜 변경 리스너
-        binding.calendarView.setOnDateChangeListener((view, year, month, dayOfMonth) -> {
-            selectedDate = String.format(Locale.getDefault(), "%04d-%02d-%02d", year, month + 1, dayOfMonth);
+        // 10/31
+        // MaterialCalendarView 날짜 클릭 이벤트 및 이벤트 점(Dot) 데코레이터 적용
+        binding.calendarView.setOnDateChangedListener((widget, date, selected) -> {
+            selectedDate = String.format(Locale.getDefault(), "%04d-%02d-%02d", date.getYear(), date.getMonth() + 1, date.getDay());
             filterSchedulesByDate(selectedDate);
         });
 
-        // 오늘 날짜 일정 로딩
+        // 오늘 날짜 일정 로딩 및 캘린더 이벤트 점(Dot) 갱신
         filterSchedulesByDate(selectedDate);
+        updateCalendarEvents();
 
         // CRUD: Swipe to delete
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
@@ -116,6 +122,7 @@ public class ScheduleActivity extends AppCompatActivity {
                     cancelScheduleAlarm(removedSchedule.getId());
                     dataManager.saveSchedules(allList);
                     filterSchedulesByDate(selectedDate);
+                    updateCalendarEvents();
                     Toast.makeText(ScheduleActivity.this, "일정이 삭제되었습니다.", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -147,12 +154,85 @@ public class ScheduleActivity extends AppCompatActivity {
         });
     }
 
+    private boolean isScheduleOnDate(Schedule s, String targetDateText) {
+        if (s == null || targetDateText == null || s.getDate() == null || s.getDate().isEmpty()) {
+            return false;
+        }
+
+        String startDateText = s.getDate();
+        // 등록된 날짜 이전 날짜에는 표시하지 않음
+        if (startDateText.compareTo(targetDateText) > 0) {
+            return false;
+        }
+
+        String repeat = s.getRepeatOption();
+        if ("NONE".equalsIgnoreCase(repeat)) {
+            return startDateText.equals(targetDateText);
+        }
+
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            Date startDate = sdf.parse(startDateText);
+            Date targetDate = sdf.parse(targetDateText);
+
+            if (startDate == null || targetDate == null) return false;
+
+            Calendar startCal = Calendar.getInstance();
+            startCal.setTime(startDate);
+
+            Calendar targetCal = Calendar.getInstance();
+            targetCal.setTime(targetDate);
+
+            if ("WEEKLY".equalsIgnoreCase(repeat)) {
+                return startCal.get(Calendar.DAY_OF_WEEK) == targetCal.get(Calendar.DAY_OF_WEEK);
+            } else if ("MONTHLY".equalsIgnoreCase(repeat)) {
+                return startCal.get(Calendar.DAY_OF_MONTH) == targetCal.get(Calendar.DAY_OF_MONTH);
+            } else if ("YEARLY".equalsIgnoreCase(repeat)) {
+                return (startCal.get(Calendar.MONTH) == targetCal.get(Calendar.MONTH)) &&
+                       (startCal.get(Calendar.DAY_OF_MONTH) == targetCal.get(Calendar.DAY_OF_MONTH));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return startDateText.equals(targetDateText);
+    }
+
+    private void updateCalendarEvents() {
+        // 10/31
+        // 저장소의 전체 일정을 쿼리하여 반복 일정을 고려해 달력 데코레이터를 적용함
+        List<Schedule> allSchedules = dataManager.getSchedules();
+        List<CalendarDay> eventDays = new ArrayList<>();
+        if (allSchedules != null && binding != null && binding.calendarView != null) {
+            CalendarDay currentMonth = binding.calendarView.getCurrentDate();
+            int year = currentMonth.getYear();
+            int month = currentMonth.getMonth(); // 0-based
+
+            Calendar cal = Calendar.getInstance();
+            cal.set(year, month, 1);
+            int maxDays = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+
+            for (int d = 1; d <= maxDays; d++) {
+                String targetDateText = String.format(Locale.getDefault(), "%04d-%02d-%02d", year, month + 1, d);
+                for (Schedule s : allSchedules) {
+                    if (isScheduleOnDate(s, targetDateText)) {
+                        eventDays.add(CalendarDay.from(year, month, d));
+                        break;
+                    }
+                }
+            }
+        }
+        binding.calendarView.removeDecorators();
+        int dotColor = 0xFF1A73E8; // 기본 강조 파란색
+        binding.calendarView.addDecorator(new EventDecorator(dotColor, eventDays));
+    }
+
     private List<Schedule> getFilteredSchedules(String date) {
         List<Schedule> all = dataManager.getSchedules();
         List<Schedule> filtered = new ArrayList<>();
         if (all != null) {
             for (Schedule s : all) {
-                if (date.equals(s.getDate())) {
+                if (isScheduleOnDate(s, date)) {
                     filtered.add(s);
                 }
             }
@@ -301,6 +381,34 @@ public class ScheduleActivity extends AppCompatActivity {
         chipGroup.addView(customChip);
         layout.addView(chipGroup);
 
+        // 10/31
+        // 반복 주기 선택 레이아웃 (반복없음, 매주, 매월, 매년)
+        TextView tvRepeatLabel = new TextView(this);
+        tvRepeatLabel.setText("반복 주기 설정:");
+        tvRepeatLabel.setTextSize(14f);
+        tvRepeatLabel.setPadding(0, 20, 0, 8);
+        layout.addView(tvRepeatLabel);
+
+        final String[] repeatOption = {editSchedule != null ? editSchedule.getRepeatOption() : "NONE"};
+
+        ChipGroup repeatChipGroup = new ChipGroup(this);
+        repeatChipGroup.setSingleSelection(true);
+
+        String[] repeatKeys = {"NONE", "WEEKLY", "MONTHLY", "YEARLY"};
+        String[] repeatLabels = {"반복 없음", "매주 반복", "매월 반복", "매년 반복"};
+
+        for (int i = 0; i < repeatKeys.length; i++) {
+            final String keyVal = repeatKeys[i];
+            Chip chip = new Chip(this);
+            chip.setText(repeatLabels[i]);
+            chip.setCheckable(true);
+            if (repeatOption[0].equalsIgnoreCase(keyVal)) chip.setChecked(true);
+
+            chip.setOnClickListener(v -> repeatOption[0] = keyVal);
+            repeatChipGroup.addView(chip);
+        }
+        layout.addView(repeatChipGroup);
+
         String titleText = (editSchedule == null) ? "일정 추가" : "일정 수정";
         String positiveText = (editSchedule == null) ? "추가" : "수정";
 
@@ -319,12 +427,12 @@ public class ScheduleActivity extends AppCompatActivity {
 
                     List<Schedule> allList = dataManager.getSchedules();
                     if (editSchedule == null) {
-                        Schedule newSchedule = new Schedule(UUID.randomUUID().toString(), todoText, whenText, false, alarmOffset[0], selectedDate);
+                        Schedule newSchedule = new Schedule(UUID.randomUUID().toString(), todoText, whenText, false, alarmOffset[0], selectedDate, repeatOption[0]);
                         allList.add(newSchedule);
                         setScheduleAlarm(newSchedule.getId(), todoText, selectedDate, whenText, alarmOffset[0]);
                         Toast.makeText(this, "일정이 추가되었습니다.", Toast.LENGTH_SHORT).show();
                     } else {
-                        Schedule updatedSchedule = new Schedule(editSchedule.getId(), todoText, whenText, editSchedule.isCompleted(), alarmOffset[0], editSchedule.getDate());
+                        Schedule updatedSchedule = new Schedule(editSchedule.getId(), todoText, whenText, editSchedule.isCompleted(), alarmOffset[0], editSchedule.getDate(), repeatOption[0]);
                         
                         for (int i = 0; i < allList.size(); i++) {
                             if (allList.get(i).getId().equals(editSchedule.getId())) {
@@ -338,6 +446,7 @@ public class ScheduleActivity extends AppCompatActivity {
 
                     dataManager.saveSchedules(allList);
                     filterSchedulesByDate(selectedDate);
+                    updateCalendarEvents();
                 })
                 .setNegativeButton("취소", null)
                 .show();
