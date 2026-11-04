@@ -1,0 +1,139 @@
+<resources>
+    <string name="app_name">My Life Manager</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- Main Dashboard -->
+    <string name="welcome_message">Welcome, User!</string>
+    <string name="today_expense">Today\'s Expense: 0</string>
+    <string name="current_balance">Current Balance</string>
+    <string name="settings_content_description">Settings</string>
+    <string name="d_day_message">D-15 until Allowance Day</string>
+    <string name="daily_recommended_message">Recommended Daily Spend: 5,000</string>
+    <string name="today_schedule_title">Today\'s Schedule (0)</string>
+    <string name="recent_expense_title">Recent Transactions</string>
+    <string name="empty_schedule">No schedules registered for today</string>
+    <string name="empty_expense">No recent transactions</string>
+    <string name="btn_manage_schedule">+ Manage Schedule</string>
+    <string name="btn_add_expense">+ Expense</string>
+
+    <!-- Bottom Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_expense">Expenses</string>
+    <string name="nav_schedule">Schedule</string>
+
+    <!-- Schedule Screen -->
+    <string name="schedule_title">My Schedule</string>
+    <string name="schedule_empty">No schedules registered\nTap + to add one</string>
+    <string name="add_schedule">Add Schedule</string>
+
+    <!-- Expense Screen -->
+    <string name="expense_title">Expenses / Income</string>
+    <string name="expense_empty">No transactions registered\nTap + to add one</string>
+    <string name="add_expense">Add Transaction</string>
+
+    <!-- Dialogs -->
+    <string name="hint_expense_title">Title (e.g. Lunch)</string>
+    <string name="hint_expense_amount">Amount (e.g. 10000)</string>
+    <string name="label_expense">Expense</string>
+    <string name="label_income">Income</string>
+    <string name="label_waste">Was this \'Waste\'? (Waste Challenge)</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">Settings</string>
+    <string name="section_profile">Profile Information</string>
+    <string name="section_allowance">Allowance Settings</string>
+    <string name="hint_user_name">Enter your name (e.g. John)</string>
+    <string name="hint_balance">Current Balance (e.g. 50000)</string>
+    <string name="hint_allowance_amount">Allowance Amount (e.g. 100000)</string>
+    <string name="label_allowance_cycle">Allowance Cycle</string>
+    <string name="label_monthly">Monthly</string>
+    <string name="label_weekly">Weekly</string>
+    <string name="label_weekly_day">Select Day of Week</string>
+    <string name="label_monthly_day">Select Day of Month</string>
+    <string name="btn_save_settings">Save Settings</string>
+    <string name="btn_reset_data">Reset All Data</string>
+    <string name="dialog_reset_title">Reset All Data</string>
+    <string name="dialog_reset_message">Are you sure you want to reset all data?\nDeleted data cannot be recovered.</string>
+    <string name="btn_reset_confirm">Reset</string>
+
+    <string name="section_weather">Weather &amp; Location Settings</string>
+    <string name="label_use_gps">Use GPS Automatic Location</string>
+    <string name="label_select_city">Select City Manually</string>
+
+    <!-- Waste Report -->
+    <string name="waste_report_title">🚨 Monthly Waste Challenge Status</string>
+    <string name="waste_report_zero">No waste expense this month! Perfect! 👏</string>
+    <string name="waste_report_format">Uncontrolled waste: %1$d items (%2$s) 😅</string>
+
+    <!-- Search Hints -->
+    <string name="hint_search_expense">Search expenses (e.g. Lunch, Taxi)</string>
+    <string name="hint_search_schedule">Search schedules (e.g. Meeting, Task)</string>
+
+    <string-array name="week_days">
+        <item>Sunday</item>
+        <item>Monday</item>
+        <item>Tuesday</item>
+        <item>Wednesday</item>
+        <item>Thursday</item>
+        <item>Friday</item>
+        <item>Saturday</item>
+    </string-array>
+
+    <string-array name="cities_display">
+        <item>Seoul</item>
+        <item>Busan</item>
+        <item>Incheon</item>
+        <item>Daegu</item>
+        <item>Daejeon</item>
+        <item>Gwangju</item>
+        <item>Ulsan</item>
+        <item>Suwon</item>
+        <item>Sejong</item>
+        <item>Jeju</item>
+    </string-array>
+
+    <string-array name="cities_value">
+        <item>Seoul</item>
+        <item>Busan</item>
+        <item>Incheon</item>
+        <item>Daegu</item>
+        <item>Daejeon</item>
+        <item>Gwangju</item>
+        <item>Ulsan</item>
+        <item>Suwon</item>
+        <item>Sejong</item>
+        <item>Jeju</item>
+    </string-array>
+
+    <!-- Splash Quotes in English -->
+    <string-array name="quotes_array">
+        <item>\"Make today valuable and meaningful!\"</item>
+        <item>\"Recording is more reliable than memory.\"</item>
+        <item>\"Small habits create big changes tomorrow.\"</item>
+        <item>\"Planning brings the future into the present.\"</item>
+        <item>\"Record today\'s expenses and gain tomorrow\'s freedom.\"</item>
+        <item>\"Every penny counts, have a great day!\"</item>
+        <item>\"He who controls expenses controls his life.\"</item>
+        <item>\"Frugality is a great revenue in itself.\"</item>
+        <item>\"Manage your time and money wisely.\"</item>
+        <item>\"Never put off until tomorrow what you can do today.\"</item>
+        <item>\"Small savings gather into great fruits.\"</item>
+        <item>\"One step closer to your goals today!\"</item>
+        <item>\"Your worth is always more important than spending.\"</item>
+        <item>\"Well begun is half done! Have a powerful start!\"</item>
+        <item>\"Wise consumption is the best investment in yourself.\"</item>
+        <item>\"Consistency eventually creates excellence.\"</item>
+        <item>\"Managing money is a true skill.\"</item>
+        <item>\"Today\'s neat plan gifts tomorrow\'s peace.\"</item>
+        <item>\"A waste-free day, full of accomplishment!\"</item>
+        <item>\"A special life flowing according to plan.\"</item>
+        <item>\"Believe in yourself and invest in valuable things.\"</item>
+        <item>\"Step by step towards your goal.\"</item>
+        <item>\"Good habits change your destiny.\"</item>
+        <item>\"Check your expenses and schedule today.\"</item>
+        <item>\"Design a precious future with wise management.\"</item>
+        <item>\"A time to neatly organize your day.\"</item>
+        <item>\"Healthy life with My Life Manager!\"</item>
+        <item>\"Cheering for you on another hard-working day!\"</item>
+    </string-array>
+</resources>

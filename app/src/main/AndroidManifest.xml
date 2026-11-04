@@ -37,6 +37,7 @@
         <activity android:name=".ScheduleActivity" />
         <activity android:name=".SettingsActivity" />
         <receiver android:name=".ScheduleAlarmReceiver" android:exported="false" />
+        <receiver android:name=".DailyExpenseAlarmReceiver" android:exported="false" />
     </application>
 
 </manifest>

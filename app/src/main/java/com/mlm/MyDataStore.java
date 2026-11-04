@@ -204,4 +204,42 @@ public class MyDataStore {
     public String getWeatherCity() {
         return prefs.getString(KEY_WEATHER_CITY, "Seoul");
     }
+
+    // 11/04
+    // 이번 달 작성된 낭비 지출 건수 및 누적 낭비 금액 계산
+    public int getMonthlyWasteCount() {
+        Calendar now = Calendar.getInstance();
+        int currentYear = now.get(Calendar.YEAR);
+        int currentMonth = now.get(Calendar.MONTH);
+
+        int count = 0;
+        for (Expense e : getExpenses()) {
+            if (e.isMinus() && e.isWaste() && e.getTimestamp() > 0) {
+                Calendar c = Calendar.getInstance();
+                c.setTimeInMillis(e.getTimestamp());
+                if (c.get(Calendar.YEAR) == currentYear && c.get(Calendar.MONTH) == currentMonth) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    public int getMonthlyWasteAmount() {
+        Calendar now = Calendar.getInstance();
+        int currentYear = now.get(Calendar.YEAR);
+        int currentMonth = now.get(Calendar.MONTH);
+
+        int amount = 0;
+        for (Expense e : getExpenses()) {
+            if (e.isMinus() && e.isWaste() && e.getTimestamp() > 0) {
+                Calendar c = Calendar.getInstance();
+                c.setTimeInMillis(e.getTimestamp());
+                if (c.get(Calendar.YEAR) == currentYear && c.get(Calendar.MONTH) == currentMonth) {
+                    amount += e.getMoney();
+                }
+            }
+        }
+        return amount;
+    }
 }

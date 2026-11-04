@@ -28,7 +28,8 @@ public class EventDecorator implements DayViewDecorator {
 
     @Override
     public void decorate(DayViewFacade view) {
-        // 날짜 밑에 8dp 크기의 동그라미 점(Dot)을 그림
-        view.addSpan(new DotSpan(8f, color));
+        // 11/03
+        // 라이트 모드 시 도트 시인성 개선을 위해 반지름 크기 확대(8f -> 10f) 및 선명도 보강
+        view.addSpan(new DotSpan(10f, color));
     }
 }

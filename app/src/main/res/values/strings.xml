@@ -127,4 +127,13 @@
         <item>\"마이 라이프 매니저와 함께하는 건강한 라이프!\"</item>
         <item>\"오늘도 수고할 당신을 진심으로 응원합니다.\"</item>
     </string-array>
+
+    <!-- 낭비 챌린지 리포트 문자열 -->
+    <string name="waste_report_title">🚨 이번 달 낭비 챌린지 현황</string>
+    <string name="waste_report_zero">이번 달은 낭비 지출이 0원이에요! 완벽해요! 👏</string>
+    <string name="waste_report_format">이번 달 참아내지 못한 낭비 지출: 총 %1$d건 (%2$s원) 😅</string>
+
+    <!-- 검색창 문자열 -->
+    <string name="hint_search_expense">내역 검색어 입력 (예: 점심, 택시)</string>
+    <string name="hint_search_schedule">일정 검색어 입력 (예: 미팅, 과제)</string>
 </resources>

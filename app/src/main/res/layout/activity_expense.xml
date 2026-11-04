@@ -29,6 +29,64 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <!-- 낭비 챌린지 지출 리포트 카드 -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cvWasteReport"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            app:cardBackgroundColor="?attr/colorErrorContainer"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp"
+            app:layout_constraintTop_toBottomOf="@id/tvExpenseTitle">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/tvWasteTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="@string/waste_report_title"
+                    android:textColor="?attr/colorOnErrorContainer"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvWasteValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/waste_report_zero"
+                    android:textColor="?attr/colorOnErrorContainer"
+                    android:textSize="13sp" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- 실시간 검색창 -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilSearchExpense"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:hint="@string/hint_search_expense"
+            app:endIconMode="clear_text"
+            app:startIconDrawable="@android:drawable/ic_menu_search"
+            app:layout_constraintTop_toBottomOf="@id/cvWasteReport">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etSearchExpense"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
         <!-- 빈 상태 (기본 숨김) -->
         <TextView
             android:id="@+id/tvEmptyExpense"
@@ -42,19 +100,19 @@
             android:textColor="?attr/colorOnSurface"
             android:textSize="14sp"
             android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@id/tvExpenseTitle" />
+            app:layout_constraintTop_toBottomOf="@id/tilSearchExpense" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvExpenseList"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="10dp"
             android:clipToPadding="false"
             android:paddingBottom="88dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvExpenseTitle"
+            app:layout_constraintTop_toBottomOf="@id/tilSearchExpense"
             tools:listitem="@layout/item_expense" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton

@@ -97,6 +97,21 @@ public class ScheduleActivity extends AppCompatActivity {
         filterSchedulesByDate(selectedDate);
         updateCalendarEvents();
 
+        // 11/05
+        // 계획표 키워드 실시간 검색 (TextWatcher 연동)
+        binding.etSearchSchedule.addTextChangedListener(new android.text.TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filterSchedulesByQuery(s.toString().trim());
+            }
+
+            @Override
+            public void afterTextChanged(android.text.Editable s) {}
+        });
+
         // CRUD: Swipe to delete
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
@@ -223,7 +238,14 @@ public class ScheduleActivity extends AppCompatActivity {
             }
         }
         binding.calendarView.removeDecorators();
-        int dotColor = 0xFF1A73E8; // 기본 강조 파란색
+
+        // 11/03
+        // 라이트 모드일 때 달력 도트(Dot)가 흰색 배경에 묻혀서 안 보이던 버그 수정.
+        // 야간 모드가 아닐 때(라이트 모드)는 선명하고 눈에 잘 띄는 짙은 코발트 블루(0xFF1565C0) 적용.
+        int nightModeFlags = getResources().getConfiguration().uiMode & android.content.res.Configuration.UI_MODE_NIGHT_MASK;
+        boolean isDarkMode = (nightModeFlags == android.content.res.Configuration.UI_MODE_NIGHT_YES);
+        int dotColor = isDarkMode ? 0xFF64B5F6 : 0xFF1565C0;
+
         binding.calendarView.addDecorator(new EventDecorator(dotColor, eventDays));
     }
 
@@ -244,6 +266,26 @@ public class ScheduleActivity extends AppCompatActivity {
         List<Schedule> filtered = getFilteredSchedules(date);
         adapter.updateData(filtered);
         updateEmptyState(filtered);
+    }
+
+    private void filterSchedulesByQuery(String query) {
+        // 11/05
+        // 검색어에 따른 선택된 날짜의 일정 키워드 필터링
+        List<Schedule> daySchedules = getFilteredSchedules(selectedDate);
+        if (query == null || query.isEmpty()) {
+            adapter.updateData(daySchedules);
+            updateEmptyState(daySchedules);
+            return;
+        }
+
+        List<Schedule> queryFiltered = new ArrayList<>();
+        for (Schedule s : daySchedules) {
+            if (s.getTodo() != null && s.getTodo().toLowerCase().contains(query.toLowerCase())) {
+                queryFiltered.add(s);
+            }
+        }
+        adapter.updateData(queryFiltered);
+        updateEmptyState(queryFiltered);
     }
 
     private void updateEmptyState(List<Schedule> list) {

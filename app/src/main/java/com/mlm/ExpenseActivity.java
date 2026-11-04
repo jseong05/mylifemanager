@@ -34,12 +34,28 @@ public class ExpenseActivity extends AppCompatActivity {
         binding.rvExpenseList.setLayoutManager(new LinearLayoutManager(this));
         List<Expense> list = dataManager.getExpenses();
         updateEmptyState(list);
+        updateWasteReport();
         adapter = new ExpenseAdapter(list, (expense, position) -> {
             showAddOrEditExpenseDialog(expense, position);
         });
         binding.rvExpenseList.setAdapter(adapter);
 
-        // CRUD: Swipe to delete
+        // 11/05
+        // 가계부 내역 키워드 실시간 검색 (TextWatcher 연동)
+        binding.etSearchExpense.addTextChangedListener(new android.text.TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filterExpenses(s.toString().trim());
+            }
+
+            @Override
+            public void afterTextChanged(android.text.Editable s) {}
+        });
+
+        
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
@@ -54,12 +70,13 @@ public class ExpenseActivity extends AppCompatActivity {
                 dataManager.saveExpenses(currentList);
                 adapter.updateData(currentList);
                 updateEmptyState(currentList);
+                updateWasteReport();
                 Toast.makeText(ExpenseActivity.this, "내역이 삭제되었습니다.", Toast.LENGTH_SHORT).show();
             }
         });
         itemTouchHelper.attachToRecyclerView(binding.rvExpenseList);
 
-        // CRUD: Dialog to add
+        
         binding.fabAddExpense.setOnClickListener(v -> showAddOrEditExpenseDialog(null, -1));
 
         binding.bottomNavigation.setSelectedItemId(R.id.navigation_expense);
@@ -84,11 +101,46 @@ public class ExpenseActivity extends AppCompatActivity {
         });
     }
 
+    private void filterExpenses(String query) {
+        // 11/05
+        // 가계부 검색어에 따라 메모(제목) 키워드 필터링
+        List<Expense> allList = dataManager.getExpenses();
+        if (query == null || query.isEmpty()) {
+            adapter.updateData(allList);
+            updateEmptyState(allList);
+            return;
+        }
+
+        List<Expense> filtered = new java.util.ArrayList<>();
+        for (Expense e : allList) {
+            if (e.getMemo() != null && e.getMemo().toLowerCase().contains(query.toLowerCase())) {
+                filtered.add(e);
+            }
+        }
+        adapter.updateData(filtered);
+        updateEmptyState(filtered);
+    }
+
     private void updateEmptyState(List<Expense> list) {
         boolean empty = list == null || list.isEmpty();
         if (binding != null) {
             binding.tvEmptyExpense.setVisibility(empty ? View.VISIBLE : View.GONE);
             binding.rvExpenseList.setVisibility(empty ? View.GONE : View.VISIBLE);
+        }
+    }
+
+    private void updateWasteReport() {
+        // 11/04
+        // 이번 달 낭비 챌린지 지출 건수 및 누적 금액 리포트 업데이트 (strings.xml 리소스 연동)
+        if (binding != null && binding.tvWasteValue != null) {
+            int count = dataManager.getMonthlyWasteCount();
+            int amount = dataManager.getMonthlyWasteAmount();
+            if (count > 0) {
+                String formattedAmount = String.format(java.util.Locale.getDefault(), "%,d", amount);
+                binding.tvWasteValue.setText(getString(R.string.waste_report_format, count, formattedAmount));
+            } else {
+                binding.tvWasteValue.setText(getString(R.string.waste_report_zero));
+            }
         }
     }
 
@@ -152,6 +204,7 @@ public class ExpenseActivity extends AppCompatActivity {
                     dataManager.saveExpenses(currentList);
                     adapter.updateData(currentList);
                     updateEmptyState(currentList);
+                    updateWasteReport();
 
                     if (dataManager.totalMoneyNow() < 0) {
                         new MaterialAlertDialogBuilder(this)

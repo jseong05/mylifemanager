@@ -52,6 +52,25 @@
                 app:mcv_showOtherDates="all" />
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- 실시간 일정 검색창 -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilSearchSchedule"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:hint="@string/hint_search_schedule"
+            app:endIconMode="clear_text"
+            app:startIconDrawable="@android:drawable/ic_menu_search"
+            app:layout_constraintTop_toBottomOf="@id/cardCalendar">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etSearchSchedule"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
         <!-- 빈 상태 (기본 숨김) -->
         <TextView
             android:id="@+id/tvEmptySchedule"
@@ -65,19 +84,19 @@
             android:textColor="?attr/colorOnSurface"
             android:textSize="14sp"
             android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@id/cardCalendar" />
+            app:layout_constraintTop_toBottomOf="@id/tilSearchSchedule" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvScheduleList"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="10dp"
             android:clipToPadding="false"
             android:paddingBottom="88dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/cardCalendar"
+            app:layout_constraintTop_toBottomOf="@id/tilSearchSchedule"
             tools:listitem="@layout/item_schedule" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton

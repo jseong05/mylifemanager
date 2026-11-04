@@ -2,11 +2,14 @@ package com.mlm;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import android.Manifest;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -60,6 +63,9 @@ public class MainActivity extends AppCompatActivity {
 
         // 앱 전체적인 부분에서 데이터를 관리하는 저장소 (SharedPreferences+Gson)
         dataManager = new MyDataStore(this);
+
+        // 매일 밤 21:00 지출 미입력 체크 푸시 알림 예약
+        setupDailyExpenseReminder();
 
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.main, (v, insets) -> {
@@ -302,5 +308,51 @@ public class MainActivity extends AppCompatActivity {
                 binding.chipWeather.setText("🌤️ 날씨 정보를 불러올 수 없음");
             }
         });
+    }
+
+    private void setupDailyExpenseReminder() {
+        // 11/05
+        // 매일 밤 21:00 지출 미입력 체크 푸시 알림 반복 예약 (AlarmManager)
+        try {
+            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            Intent intent = new Intent(this, DailyExpenseAlarmReceiver.class);
+
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                    this,
+                    2001,
+                    intent,
+                    PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE
+            );
+
+            if (pendingIntent == null && alarmManager != null) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(Calendar.HOUR_OF_DAY, 21);
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+
+                if (calendar.getTimeInMillis() <= System.currentTimeMillis()) {
+                    calendar.add(Calendar.DAY_OF_YEAR, 1);
+                }
+
+                PendingIntent newPendingIntent = PendingIntent.getBroadcast(
+                        this,
+                        2001,
+                        intent,
+                        PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+                );
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    if (alarmManager.canScheduleExactAlarms()) {
+                        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), newPendingIntent);
+                    } else {
+                        alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), newPendingIntent);
+                    }
+                } else {
+                    alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), newPendingIntent);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
