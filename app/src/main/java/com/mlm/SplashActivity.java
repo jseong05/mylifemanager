@@ -13,6 +13,7 @@ public class SplashActivity extends AppCompatActivity {
     private ActivitySplashBinding binding;
     private Handler handler = new Handler(Looper.getMainLooper());
     private Runnable typingRunnable;
+    private Runnable navigateRunnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,19 +52,26 @@ public class SplashActivity extends AppCompatActivity {
         };
         handler.postDelayed(typingRunnable, 350); // 0.35초 후 타이핑 시작
 
-        // 4. 약 2.4초 후 메인 화면으로 전환
-        handler.postDelayed(() -> {
+        // 11/05
+        // 스플래시 화면 이탈 시 메인 화면이 백그라운드에서 강제 실행되지 않도록 Runnable 및 onDestroy 해제 추가
+        navigateRunnable = () -> {
             startActivity(new Intent(SplashActivity.this, MainActivity.class));
             finish();
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-        }, 2400);
+        };
+        handler.postDelayed(navigateRunnable, 2400);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (handler != null && typingRunnable != null) {
-            handler.removeCallbacks(typingRunnable);
+        if (handler != null) {
+            if (typingRunnable != null) {
+                handler.removeCallbacks(typingRunnable);
+            }
+            if (navigateRunnable != null) {
+                handler.removeCallbacks(navigateRunnable);
+            }
         }
     }
 }

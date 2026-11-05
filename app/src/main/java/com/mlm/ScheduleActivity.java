@@ -511,7 +511,9 @@ public class ScheduleActivity extends AppCompatActivity {
         try {
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
             Intent intent = new Intent(this, ScheduleAlarmReceiver.class);
-            int requestCode = scheduleId.hashCode();
+            // 11/05
+            // 알람 고유 requestCode의 음수값 변환 및 PendingIntent 식별 안정성 보강
+            int requestCode = Math.abs(scheduleId.hashCode());
             PendingIntent pendingIntent = PendingIntent.getBroadcast(
                     this,
                     requestCode,
@@ -552,7 +554,9 @@ public class ScheduleActivity extends AppCompatActivity {
                 intent.putExtra(ScheduleAlarmReceiver.EXTRA_TITLE, todo);
                 intent.putExtra("EXTRA_MINUTES_BEFORE", minutesBefore);
 
-                int requestCode = scheduleId.hashCode();
+                // 11/05
+                // 알람 고유 requestCode의 음수값 변환 및 PendingIntent 식별 안정성 보강
+                int requestCode = Math.abs(scheduleId.hashCode());
                 PendingIntent pendingIntent = PendingIntent.getBroadcast(
                         this,
                         requestCode,

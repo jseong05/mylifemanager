@@ -199,21 +199,38 @@ public class MainActivity extends AppCompatActivity {
         // 날씨 정보 호출 (GPS 또는 설정 도시 기반)
         updateWeatherInfo();
 
-        // D-Day 및 실질적 권장 지출 계산
+        // 11/05
+        // 주간/월간 용돈 설정 구분에 따른 D-Day 및 권장 지출액 계산 로직 분기 보완
         Calendar now = Calendar.getInstance();
-        int currentDayOfMonth = now.get(Calendar.DAY_OF_MONTH);
-        int targetMonthlyDay = dataManager.getAllowanceDay() + 1; // 1 ~ 31
+        String allowanceCycle = dataManager.getAllowanceCycle();
         int daysLeft;
-        if (targetMonthlyDay >= currentDayOfMonth) {
-            daysLeft = targetMonthlyDay - currentDayOfMonth;
+
+        if ("weekly".equals(allowanceCycle)) {
+            // 주간 용돈: 선택한 요일(0=월, 1=화, ..., 6=일)까지 남은 날짜 계산
+            int targetDayOfWeek = dataManager.getAllowanceDay();
+            int currentDayOfWeek = now.get(Calendar.DAY_OF_WEEK);
+            int currentConverted = (currentDayOfWeek == Calendar.SUNDAY) ? 6 : (currentDayOfWeek - 2);
+
+            int diffDays = targetDayOfWeek - currentConverted;
+            if (diffDays <= 0) {
+                diffDays += 7;
+            }
+            daysLeft = diffDays;
         } else {
-            Calendar nextMonth = (Calendar) now.clone();
-            nextMonth.add(Calendar.MONTH, 1);
-            int maxDay = nextMonth.getActualMaximum(Calendar.DAY_OF_MONTH);
-            int target = Math.min(targetMonthlyDay, maxDay);
-            nextMonth.set(Calendar.DAY_OF_MONTH, target);
-            long diff = nextMonth.getTimeInMillis() - now.getTimeInMillis();
-            daysLeft = (int) (diff / (1000 * 60 * 60 * 24));
+            // 월간 용돈: 선택한 일자(1 ~ 31일)까지 남은 날짜 계산
+            int currentDayOfMonth = now.get(Calendar.DAY_OF_MONTH);
+            int targetMonthlyDay = dataManager.getAllowanceDay() + 1; // 1 ~ 31
+            if (targetMonthlyDay >= currentDayOfMonth) {
+                daysLeft = targetMonthlyDay - currentDayOfMonth;
+            } else {
+                Calendar nextMonth = (Calendar) now.clone();
+                nextMonth.add(Calendar.MONTH, 1);
+                int maxDay = nextMonth.getActualMaximum(Calendar.DAY_OF_MONTH);
+                int target = Math.min(targetMonthlyDay, maxDay);
+                nextMonth.set(Calendar.DAY_OF_MONTH, target);
+                long diff = nextMonth.getTimeInMillis() - now.getTimeInMillis();
+                daysLeft = (int) (diff / (1000 * 60 * 60 * 24));
+            }
         }
         if (daysLeft <= 0) daysLeft = 1;
 
@@ -226,14 +243,15 @@ public class MainActivity extends AppCompatActivity {
             binding.tvDailyRecommended.setText(String.format(Locale.getDefault(), "오늘 권장 지출액: %,d원", recommendedDaily));
             binding.tvDailyRecommended.setTextColor(0xFF1A73E8);
         }
-// 오늘 날짜 기준으로 일정 필터링
+        // 11/05
+        // 반복 일정(매주, 매월, 매년) 고려하여 오늘 날짜에 해당하는 일정 필터링 (기존 단순 날짜 비교 버그 수정)
         SimpleDateFormat dateSdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         String today = dateSdf.format(new Date());
 
         List<Schedule> allSchedules = dataManager.getSchedules();
         List<Schedule> todaySchedules = new ArrayList<>();
         for (Schedule s : allSchedules) {
-            if (today.equals(s.getDate())) {
+            if (isScheduleOnDate(s, today)) {
                 todaySchedules.add(s);
             }
         }
@@ -354,5 +372,48 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private boolean isScheduleOnDate(Schedule s, String targetDateText) {
+        if (s == null || targetDateText == null || s.getDate() == null || s.getDate().isEmpty()) {
+            return false;
+        }
+
+        String startDateText = s.getDate();
+        if (startDateText.compareTo(targetDateText) > 0) {
+            return false;
+        }
+
+        String repeat = s.getRepeatOption();
+        if ("NONE".equalsIgnoreCase(repeat)) {
+            return startDateText.equals(targetDateText);
+        }
+
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            Date startDate = sdf.parse(startDateText);
+            Date targetDate = sdf.parse(targetDateText);
+
+            if (startDate == null || targetDate == null) return false;
+
+            Calendar startCal = Calendar.getInstance();
+            startCal.setTime(startDate);
+
+            Calendar targetCal = Calendar.getInstance();
+            targetCal.setTime(targetDate);
+
+            if ("WEEKLY".equalsIgnoreCase(repeat)) {
+                return startCal.get(Calendar.DAY_OF_WEEK) == targetCal.get(Calendar.DAY_OF_WEEK);
+            } else if ("MONTHLY".equalsIgnoreCase(repeat)) {
+                return startCal.get(Calendar.DAY_OF_MONTH) == targetCal.get(Calendar.DAY_OF_MONTH);
+            } else if ("YEARLY".equalsIgnoreCase(repeat)) {
+                return (startCal.get(Calendar.MONTH) == targetCal.get(Calendar.MONTH)) &&
+                       (startCal.get(Calendar.DAY_OF_MONTH) == targetCal.get(Calendar.DAY_OF_MONTH));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return startDateText.equals(targetDateText);
     }
 }

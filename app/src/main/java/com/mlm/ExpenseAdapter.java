@@ -63,6 +63,13 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
         return expenseList.size();
     }
 
+    public Expense getItem(int position) {
+        if (expenseList != null && position >= 0 && position < expenseList.size()) {
+            return expenseList.get(position);
+        }
+        return null;
+    }
+
     public void updateData(List<Expense> newList) {
         this.expenseList = newList;
         notifyDataSetChanged();

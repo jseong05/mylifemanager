@@ -62,16 +62,25 @@ public class ExpenseActivity extends AppCompatActivity {
                 return false;
             }
 
+            // 11/05
+            // 검색 필터링 상태에서도 고유 ID 기반으로 정확한 지출 내역을 삭제하도록 수정 (인덱스 불일치 버그 해결)
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getAdapterPosition();
-                List<Expense> currentList = dataManager.getExpenses();
-                currentList.remove(position);
-                dataManager.saveExpenses(currentList);
-                adapter.updateData(currentList);
-                updateEmptyState(currentList);
-                updateWasteReport();
-                Toast.makeText(ExpenseActivity.this, "내역이 삭제되었습니다.", Toast.LENGTH_SHORT).show();
+                Expense targetExpense = adapter.getItem(position);
+                if (targetExpense != null) {
+                    List<Expense> currentList = dataManager.getExpenses();
+                    for (int i = 0; i < currentList.size(); i++) {
+                        if (currentList.get(i).getId().equals(targetExpense.getId())) {
+                            currentList.remove(i);
+                            break;
+                        }
+                    }
+                    dataManager.saveExpenses(currentList);
+                    filterExpenses(binding.etSearchExpense.getText().toString().trim());
+                    updateWasteReport();
+                    Toast.makeText(ExpenseActivity.this, "내역이 삭제되었습니다.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         itemTouchHelper.attachToRecyclerView(binding.rvExpenseList);
@@ -196,14 +205,20 @@ public class ExpenseActivity extends AppCompatActivity {
                         currentList.add(newExpense);
                         Toast.makeText(this, "내역이 추가되었습니다.", Toast.LENGTH_SHORT).show();
                     } else {
+                        // 11/05
+                        // 검색 필터링 상태에서도 고유 ID 기반으로 정확한 지출 내역을 수정하도록 보완 (인덱스 덮어쓰기 버그 해결)
                         Expense updatedExpense = new Expense(editExpense.getId(), memoStr, moneyValue, isMinusValue, isWasteValue, editExpense.getTimestamp());
-                        currentList.set(position, updatedExpense);
+                        for (int i = 0; i < currentList.size(); i++) {
+                            if (currentList.get(i).getId().equals(editExpense.getId())) {
+                                currentList.set(i, updatedExpense);
+                                break;
+                            }
+                        }
                         Toast.makeText(this, "내역이 수정되었습니다.", Toast.LENGTH_SHORT).show();
                     }
 
                     dataManager.saveExpenses(currentList);
-                    adapter.updateData(currentList);
-                    updateEmptyState(currentList);
+                    filterExpenses(binding.etSearchExpense.getText().toString().trim());
                     updateWasteReport();
 
                     if (dataManager.totalMoneyNow() < 0) {
