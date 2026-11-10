@@ -214,8 +214,8 @@ public class ScheduleActivity extends AppCompatActivity {
     }
 
     private void updateCalendarEvents() {
-        // 10/31
-        // 저장소의 전체 일정을 쿼리하여 반복 일정을 고려해 달력 데코레이터를 적용함
+        // [기존 코드 - 10/31 & 11/03 참고용 주석 처리]
+        /*
         List<Schedule> allSchedules = dataManager.getSchedules();
         List<CalendarDay> eventDays = new ArrayList<>();
         if (allSchedules != null && binding != null && binding.calendarView != null) {
@@ -238,15 +238,52 @@ public class ScheduleActivity extends AppCompatActivity {
             }
         }
         binding.calendarView.removeDecorators();
-
-        // 11/03
-        // 라이트 모드일 때 달력 도트(Dot)가 흰색 배경에 묻혀서 안 보이던 버그 수정.
-        // 야간 모드가 아닐 때(라이트 모드)는 선명하고 눈에 잘 띄는 짙은 코발트 블루(0xFF1565C0) 적용.
         int nightModeFlags = getResources().getConfiguration().uiMode & android.content.res.Configuration.UI_MODE_NIGHT_MASK;
         boolean isDarkMode = (nightModeFlags == android.content.res.Configuration.UI_MODE_NIGHT_YES);
         int dotColor = isDarkMode ? 0xFF64B5F6 : 0xFF1565C0;
-
         binding.calendarView.addDecorator(new EventDecorator(dotColor, eventDays));
+        */
+
+        // 11/10 개발일지:
+        // org.threeten.bp.DateTimeException: Invalid date 'NOVEMBER 31' 삼성 실기기 크래시 수정.
+        // 11월 31일 등 존재하지 않는 날짜 객체 생성(CalendarDay.from) 예외 방어 및 currentMonth Null Safety 보강.
+        List<Schedule> allSchedules = dataManager.getSchedules();
+        List<CalendarDay> eventDays = new ArrayList<>();
+        if (allSchedules != null && binding != null && binding.calendarView != null) {
+            CalendarDay currentMonth = binding.calendarView.getCurrentDate();
+            if (currentMonth != null) {
+                int year = currentMonth.getYear();
+                int month = currentMonth.getMonth(); // 0-based month (0=1월, 10=11월)
+
+                Calendar cal = Calendar.getInstance();
+                cal.set(Calendar.YEAR, year);
+                cal.set(Calendar.MONTH, month);
+                cal.set(Calendar.DAY_OF_MONTH, 1);
+                int maxDays = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+
+                for (int d = 1; d <= maxDays; d++) {
+                    String targetDateText = String.format(Locale.getDefault(), "%04d-%02d-%02d", year, month + 1, d);
+                    for (Schedule s : allSchedules) {
+                        if (isScheduleOnDate(s, targetDateText)) {
+                            try {
+                                eventDays.add(CalendarDay.from(year, month, d));
+                            } catch (Exception ignored) {}
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (binding != null && binding.calendarView != null) {
+            binding.calendarView.removeDecorators();
+
+            int nightModeFlags = getResources().getConfiguration().uiMode & android.content.res.Configuration.UI_MODE_NIGHT_MASK;
+            boolean isDarkMode = (nightModeFlags == android.content.res.Configuration.UI_MODE_NIGHT_YES);
+            int dotColor = isDarkMode ? 0xFF64B5F6 : 0xFF1565C0;
+
+            binding.calendarView.addDecorator(new EventDecorator(dotColor, eventDays));
+        }
     }
 
     private List<Schedule> getFilteredSchedules(String date) {
