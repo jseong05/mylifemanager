@@ -253,7 +253,7 @@ public class ScheduleActivity extends AppCompatActivity {
             CalendarDay currentMonth = binding.calendarView.getCurrentDate();
             if (currentMonth != null) {
                 int year = currentMonth.getYear();
-                int month = currentMonth.getMonth(); // 0-based month (0=1월, 10=11월)
+                int month = currentMonth.getMonth();
 
                 Calendar cal = Calendar.getInstance();
                 cal.set(Calendar.YEAR, year);
@@ -278,6 +278,17 @@ public class ScheduleActivity extends AppCompatActivity {
         if (binding != null && binding.calendarView != null) {
             binding.calendarView.removeDecorators();
 
+            // 11/17
+            // 주말(토/일) 및 8대 공휴일 빨간색 글씨 데코레이터 연동
+            if (binding.calendarView.getCurrentDate() != null) {
+                int y = binding.calendarView.getCurrentDate().getYear();
+                int m = binding.calendarView.getCurrentDate().getMonth();
+                java.util.Set<CalendarDay> holidays = HolidayCalculator.getHolidays(y, m);
+                binding.calendarView.addDecorator(new HolidayDecorator(holidays));
+            }
+
+            // 11/03
+            // 라이트 모드일 때 달력 도트(Dot)가 흰색 배경에 묻혀서 안 보이던 버그 수정.
             int nightModeFlags = getResources().getConfiguration().uiMode & android.content.res.Configuration.UI_MODE_NIGHT_MASK;
             boolean isDarkMode = (nightModeFlags == android.content.res.Configuration.UI_MODE_NIGHT_YES);
             int dotColor = isDarkMode ? 0xFF64B5F6 : 0xFF1565C0;
