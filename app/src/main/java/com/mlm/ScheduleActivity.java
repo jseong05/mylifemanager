@@ -85,12 +85,20 @@ public class ScheduleActivity extends AppCompatActivity {
         });
         binding.rvScheduleList.setAdapter(adapter);
 
+        // 동적 주 수 계산 (4주~6주 가변 렌더링) 및 상단 요일 헤더 색상 설정
+        binding.calendarView.setDynamicHeightEnabled(true);
+        binding.calendarView.setWeekDayFormatter(new CustomWeekDayFormatter(0xFFFF6B6B, 0xFF64B5F6));
+
         // 상시 달력 날짜 변경 리스너
-        // 10/31
         // MaterialCalendarView 날짜 클릭 이벤트 및 이벤트 점(Dot) 데코레이터 적용
         binding.calendarView.setOnDateChangedListener((widget, date, selected) -> {
-            selectedDate = String.format(Locale.getDefault(), "%04d-%02d-%02d", date.getYear(), date.getMonth() + 1, date.getDay());
+            selectedDate = String.format(Locale.getDefault(), "%04d-%02d-%02d", date.getYear(), date.getMonth(), date.getDay());
             filterSchedulesByDate(selectedDate);
+        });
+
+        // 달력 월 변경 시 데코레이터 및 일정 점 갱신
+        binding.calendarView.setOnMonthChangedListener((widget, date) -> {
+            updateCalendarEvents();
         });
 
         // 오늘 날짜 일정 로딩 및 캘린더 이벤트 점(Dot) 갱신
@@ -278,13 +286,21 @@ public class ScheduleActivity extends AppCompatActivity {
         if (binding != null && binding.calendarView != null) {
             binding.calendarView.removeDecorators();
 
-            // 11/17
-            // 주말(토/일) 및 8대 공휴일 빨간색 글씨 데코레이터 연동
+            // 11/22 개발일지:
+            // 1. 공휴일 오탐지 버그 수정: Calendar(0-based) 및 CalendarDay(1-based) 월 인덱스 불일치 해결 및 대한민국 법정/대체 공휴일 정교화.
+            // 2. 동적 주 수 계산(setDynamicHeightEnabled): 2026년 11월처럼 5주로 끝나는 월에서 불필요한 6주 차(다음 달 날짜) 완전 숨김 처리.
+            // 3. 토요일(블루 #64B5F6), 일요일 레드 #FF6B6B), 공휴일(코랄 레드 #E57373) 색상 분리 및 상단 요일 헤더('일', '토') 일관성 연동.
             if (binding.calendarView.getCurrentDate() != null) {
                 int y = binding.calendarView.getCurrentDate().getYear();
                 int m = binding.calendarView.getCurrentDate().getMonth();
-                java.util.Set<CalendarDay> holidays = HolidayCalculator.getHolidays(y, m);
-                binding.calendarView.addDecorator(new HolidayDecorator(holidays));
+
+                java.util.Set<CalendarDay> publicHolidays = HolidayCalculator.getPublicHolidays(y, m);
+                java.util.Set<CalendarDay> sundays = HolidayCalculator.getSundays(y, m);
+                java.util.Set<CalendarDay> saturdays = HolidayCalculator.getSaturdays(y, m);
+
+                binding.calendarView.addDecorator(new SaturdayDecorator(saturdays, 0xFF64B5F6));
+                binding.calendarView.addDecorator(new SundayDecorator(sundays, 0xFFFF6B6B));
+                binding.calendarView.addDecorator(new HolidayDecorator(publicHolidays, 0xFFE57373));
             }
 
             // 11/03
