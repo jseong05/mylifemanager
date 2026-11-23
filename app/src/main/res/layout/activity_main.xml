@@ -300,6 +300,7 @@
         app:itemIconTint="?attr/colorOnSurface"
         app:itemTextColor="?attr/colorOnSurface"
         app:labelVisibilityMode="labeled"
+        app:itemActiveIndicatorStyle="@null"
         app:layout_constraintBottom_toBottomOf="parent"
         app:menu="@menu/bottom_nav_menu" />
 

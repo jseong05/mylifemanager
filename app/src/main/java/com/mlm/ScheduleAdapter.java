@@ -35,24 +35,55 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.Schedu
     public void onBindViewHolder(@NonNull ScheduleViewHolder holder, int position) {
         Schedule schedule = scheduleList.get(position);
         holder.binding.tvScheduleTitle.setText(schedule.getTodo());
-        holder.binding.tvScheduleTime.setText(schedule.getWhen());
-        
 
-        updateCompletionUi(holder, schedule.isCompleted());
+        String dateStr = schedule.getDate() != null ? schedule.getDate() : "";
+        String timeStr = schedule.getWhen();
+        if (!schedule.isReadOnly() && timeStr != null && timeStr.contains(":")) {
+            timeStr = formatToAmPm(timeStr);
+        }
 
-        holder.binding.cbScheduleComplete.setOnCheckedChangeListener(null);
-        holder.binding.cbScheduleComplete.setChecked(schedule.isCompleted());
-        
-        holder.binding.cbScheduleComplete.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            schedule.setCompleted(isChecked);
-            updateCompletionUi(holder, isChecked);
-            if (listener != null) {
-                listener.onCheckedChanged(schedule, isChecked);
+        String repeatStr = "";
+        if (schedule.getRepeatOption() != null) {
+            switch (schedule.getRepeatOption().toUpperCase(java.util.Locale.ROOT)) {
+                case "WEEKLY": repeatStr = " · 매주"; break;
+                case "MONTHLY": repeatStr = " · 매월"; break;
+                case "YEARLY": repeatStr = " · 매년"; break;
+                default: break;
             }
-        });
+        }
+
+        String subtitle = (!dateStr.isEmpty() ? dateStr + " · " : "") + timeStr + repeatStr;
+        holder.binding.tvScheduleTime.setText(subtitle);
+
+        boolean isReadOnly = schedule.isReadOnly();
+
+        if (isReadOnly) {
+            holder.binding.cbScheduleComplete.setOnCheckedChangeListener(null);
+            holder.binding.cbScheduleComplete.setChecked(false);
+            holder.binding.cbScheduleComplete.setEnabled(false);
+            holder.binding.tvScheduleTitle.setPaintFlags(
+                    holder.binding.tvScheduleTitle.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG)
+            );
+            holder.binding.tvScheduleTitle.setAlpha(0.9f);
+            holder.binding.tvScheduleTime.setAlpha(0.9f);
+        } else {
+            holder.binding.cbScheduleComplete.setEnabled(true);
+            updateCompletionUi(holder, schedule.isCompleted());
+
+            holder.binding.cbScheduleComplete.setOnCheckedChangeListener(null);
+            holder.binding.cbScheduleComplete.setChecked(schedule.isCompleted());
+
+            holder.binding.cbScheduleComplete.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                schedule.setCompleted(isChecked);
+                updateCompletionUi(holder, isChecked);
+                if (listener != null) {
+                    listener.onCheckedChanged(schedule, isChecked);
+                }
+            });
+        }
 
         holder.itemView.setOnClickListener(v -> {
-            if (listener != null) {
+            if (!isReadOnly && listener != null) {
                 listener.onScheduleClick(schedule, position);
             }
         });
@@ -82,6 +113,21 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.Schedu
     public void updateData(List<Schedule> newList) {
         this.scheduleList = newList;
         notifyDataSetChanged();
+    }
+
+    private String formatToAmPm(String time24) {
+        if (time24 == null || !time24.contains(":")) return time24;
+        try {
+            String[] parts = time24.split(":");
+            int hour = Integer.parseInt(parts[0].trim());
+            int minute = Integer.parseInt(parts[1].trim());
+            String amPm = hour >= 12 ? "오후" : "오전";
+            int hour12 = hour % 12;
+            if (hour12 == 0) hour12 = 12;
+            return String.format(java.util.Locale.getDefault(), "%s %02d:%02d", amPm, hour12, minute);
+        } catch (Exception e) {
+            return time24;
+        }
     }
 
     static class ScheduleViewHolder extends RecyclerView.ViewHolder {

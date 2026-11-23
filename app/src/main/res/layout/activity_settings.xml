@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/colorSurface"
-    android:fitsSystemWindows="true"
     tools:context=".SettingsActivity">
 
     <ScrollView
@@ -220,6 +219,62 @@
                     android:entries="@array/cities_display" />
             </LinearLayout>
 
+            <!-- 섹션: 지출 리마인더 알림 설정 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="8dp"
+                android:letterSpacing="0.08"
+                android:text="지출 리마인더 알림 설정"
+                android:textColor="?attr/colorPrimary"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/switchDailyReminder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="오늘 지출이 없을 때 알림 받기"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="15sp" />
+
+            <LinearLayout
+                android:id="@+id/layoutReminderTimeSelection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="vertical">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSelectReminderTime"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="알림 시각: 21:00 (클릭하여 변경)" />
+            </LinearLayout>
+
+            <!-- 섹션: 화면 테마 설정 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="8dp"
+                android:letterSpacing="0.08"
+                android:text="화면 테마 설정"
+                android:textColor="?attr/colorPrimary"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/switchDarkMode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="다크 모드 사용하기"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="15sp" />
+
             <!-- 저장 버튼 -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSaveSettings"
@@ -266,6 +321,7 @@
         app:itemIconTint="?attr/colorOnSurface"
         app:itemTextColor="?attr/colorOnSurface"
         app:labelVisibilityMode="labeled"
+        app:itemActiveIndicatorStyle="@null"
         app:layout_constraintBottom_toBottomOf="parent"
         app:menu="@menu/bottom_nav_menu" />
 

@@ -21,6 +21,9 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
@@ -42,12 +45,20 @@ public class ScheduleActivity extends AppCompatActivity {
     private MyDataStore dataManager;
     private ScheduleAdapter adapter;
     private String selectedDate; // "YYYY-MM-DD" 포맷 선택된 날짜
+    private int selectedMonthFilter = -1; // -1: 전체, 0~11: 월
+    private int selectedStatusFilter = 0; // 0: 전체, 1: 미완료, 2: 완료
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityScheduleBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
+            return insets;
+        });
 
         // 오늘 날짜로 초기화
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
@@ -105,15 +116,18 @@ public class ScheduleActivity extends AppCompatActivity {
         filterSchedulesByDate(selectedDate);
         updateCalendarEvents();
 
+        // 필터 버튼 클릭 리스너
+        binding.btnScheduleFilter.setOnClickListener(v -> showScheduleFilterDialog());
+
         // 11/05
-        // 계획표 키워드 실시간 검색 (TextWatcher 연동)
+        // 계획표 키워드 실시간 검색 및 고급 필터 연동
         binding.etSearchSchedule.addTextChangedListener(new android.text.TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                filterSchedulesByQuery(s.toString().trim());
+                filterSchedulesAdvanced();
             }
 
             @Override
@@ -134,6 +148,11 @@ public class ScheduleActivity extends AppCompatActivity {
                 if (position >= 0 && position < filteredList.size()) {
                     Schedule removedSchedule = filteredList.get(position);
                     
+                    if (removedSchedule.isReadOnly() || (removedSchedule.getId() != null && removedSchedule.getId().startsWith("HOLIDAY_"))) {
+                        adapter.notifyItemChanged(position);
+                        return;
+                    }
+
                     // 전체 리스트에서 제거
                     List<Schedule> allList = dataManager.getSchedules();
                     for (int i = 0; i < allList.size(); i++) {
@@ -316,6 +335,25 @@ public class ScheduleActivity extends AppCompatActivity {
     private List<Schedule> getFilteredSchedules(String date) {
         List<Schedule> all = dataManager.getSchedules();
         List<Schedule> filtered = new ArrayList<>();
+
+        // 공휴일 확인하여 읽기 전용 공휴일 일정 항목 추가
+        if (date != null && date.contains("-")) {
+            try {
+                String[] parts = date.split("-");
+                if (parts.length == 3) {
+                    int y = Integer.parseInt(parts[0].trim());
+                    int m = Integer.parseInt(parts[1].trim());
+                    int d = Integer.parseInt(parts[2].trim());
+                    String holidayName = HolidayCalculator.getHolidayName(y, m, d);
+                    if (holidayName != null) {
+                        Schedule holidaySchedule = new Schedule("HOLIDAY_" + date, "🇰🇷 " + holidayName + " (법정 공휴일)", "종일", false);
+                        holidaySchedule.setReadOnly(true);
+                        filtered.add(holidaySchedule);
+                    }
+                }
+            } catch (Exception ignored) {}
+        }
+
         if (all != null) {
             for (Schedule s : all) {
                 if (isScheduleOnDate(s, date)) {
@@ -332,24 +370,99 @@ public class ScheduleActivity extends AppCompatActivity {
         updateEmptyState(filtered);
     }
 
-    private void filterSchedulesByQuery(String query) {
-        // 11/05
-        // 검색어에 따른 선택된 날짜의 일정 키워드 필터링
-        List<Schedule> daySchedules = getFilteredSchedules(selectedDate);
-        if (query == null || query.isEmpty()) {
-            adapter.updateData(daySchedules);
-            updateEmptyState(daySchedules);
+    private void showScheduleFilterDialog() {
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setPadding(48, 32, 48, 16);
+
+        TextView tvInfo = new TextView(this);
+        tvInfo.setText("원하는 조건을 선택하여 일정을 필터링하세요.");
+        tvInfo.setTextSize(14f);
+        tvInfo.setPadding(0, 0, 0, 16);
+        layout.addView(tvInfo);
+
+        TextView tvMonthLabel = new TextView(this);
+        tvMonthLabel.setText("조회할 월 선택:");
+        layout.addView(tvMonthLabel);
+
+        final android.widget.Spinner spMonth = new android.widget.Spinner(this);
+        String[] months = {"전체 월", "1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"};
+        android.widget.ArrayAdapter<String> adapter = new android.widget.ArrayAdapter<>(this, android.R.layout.simple_spinner_item, months);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spMonth.setAdapter(adapter);
+        spMonth.setSelection(selectedMonthFilter + 1);
+        layout.addView(spMonth);
+
+        TextView tvStatusLabel = new TextView(this);
+        tvStatusLabel.setText("완료 상태 선택:");
+        tvStatusLabel.setPadding(0, 16, 0, 0);
+        layout.addView(tvStatusLabel);
+
+        final android.widget.Spinner spStatus = new android.widget.Spinner(this);
+        String[] statuses = {"전체 보기", "미완료 일정만", "완료된 일정만"};
+        android.widget.ArrayAdapter<String> statusAdapter = new android.widget.ArrayAdapter<>(this, android.R.layout.simple_spinner_item, statuses);
+        statusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spStatus.setAdapter(statusAdapter);
+        spStatus.setSelection(selectedStatusFilter);
+        layout.addView(spStatus);
+
+        new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                .setTitle("🔍 일정 검색 필터")
+                .setView(layout)
+                .setPositiveButton("적용", (dialog, which) -> {
+                    selectedMonthFilter = spMonth.getSelectedItemPosition() - 1;
+                    selectedStatusFilter = spStatus.getSelectedItemPosition();
+                    filterSchedulesAdvanced();
+                    Toast.makeText(this, "필터가 적용되었습니다.", Toast.LENGTH_SHORT).show();
+                })
+                .setNeutralButton("필터 초기화", (dialog, which) -> {
+                    selectedMonthFilter = -1;
+                    selectedStatusFilter = 0;
+                    filterSchedulesAdvanced();
+                    Toast.makeText(this, "필터가 초기화되었습니다.", Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton("취소", null)
+                .show();
+    }
+
+    private void filterSchedulesAdvanced() {
+        String query = binding.etSearchSchedule.getText() != null ? binding.etSearchSchedule.getText().toString().trim() : "";
+        List<Schedule> allSchedules = dataManager.getSchedules();
+        List<Schedule> filtered = new ArrayList<>();
+
+        if (query.isEmpty() && selectedMonthFilter == -1 && selectedStatusFilter == 0) {
+            filterSchedulesByDate(selectedDate);
             return;
         }
 
-        List<Schedule> queryFiltered = new ArrayList<>();
-        for (Schedule s : daySchedules) {
-            if (s.getTodo() != null && s.getTodo().toLowerCase().contains(query.toLowerCase())) {
-                queryFiltered.add(s);
+        if (allSchedules != null) {
+            for (Schedule s : allSchedules) {
+                // 1. 검색어 필터
+                if (!query.isEmpty() && (s.getTodo() == null || !s.getTodo().toLowerCase().contains(query.toLowerCase()))) {
+                    continue;
+                }
+
+                // 2. 월 필터
+                if (selectedMonthFilter >= 0 && s.getDate() != null && !s.getDate().isEmpty()) {
+                    try {
+                        String[] parts = s.getDate().split("-");
+                        if (parts.length >= 2) {
+                            int m = Integer.parseInt(parts[1].trim()) - 1; // 0-based
+                            if (m != selectedMonthFilter) continue;
+                        }
+                    } catch (Exception ignored) {}
+                }
+
+                // 3. 완료 상태 필터
+                if (selectedStatusFilter == 1 && s.isCompleted()) continue;
+                if (selectedStatusFilter == 2 && !s.isCompleted()) continue;
+
+                filtered.add(s);
             }
         }
-        adapter.updateData(queryFiltered);
-        updateEmptyState(queryFiltered);
+
+        adapter.updateData(filtered);
+        updateEmptyState(filtered);
     }
 
     private void updateEmptyState(List<Schedule> list) {
@@ -518,7 +631,7 @@ public class ScheduleActivity extends AppCompatActivity {
         String titleText = (editSchedule == null) ? "일정 추가" : "일정 수정";
         String positiveText = (editSchedule == null) ? "추가" : "수정";
 
-        new AlertDialog.Builder(this)
+        new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
                 .setTitle(titleText)
                 .setView(layout)
                 .setPositiveButton(positiveText, (dialog, which) -> {

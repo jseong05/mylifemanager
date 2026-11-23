@@ -71,6 +71,47 @@ public class HolidayCalculator {
         return isFixedPublicHoliday(month, day) || isVariablePublicHoliday(year, month, day);
     }
 
+    // 공휴일 명칭 반환 (공휴일이 아닐 경우 null)
+    public static String getHolidayName(int year, int month, int day) {
+        if (month == 1 && day == 1) return "신정";
+        if (month == 3 && day == 1) return "삼일절";
+        if (month == 5 && day == 5) return "어린이날";
+        if (month == 6 && day == 6) return "현충일";
+        if (month == 8 && day == 15) return "광복절";
+        if (month == 10 && day == 3) return "개천절";
+        if (month == 10 && day == 9) return "한글날";
+        if (month == 12 && day == 25) return "크리스마스";
+
+        if (year == 2025) {
+            if (month == 1 && (day >= 28 && day <= 30)) return "설날 연휴";
+            if (month == 1 && day == 31) return "대체공휴일";
+            if (month == 3 && day == 3) return "대체공휴일";
+            if (month == 5 && day == 6) return "대체공휴일";
+            if (month == 10 && (day >= 5 && day <= 7)) return "추석 연휴";
+            if (month == 10 && day == 8) return "대체공휴일";
+        } else if (year == 2026) {
+            if (month == 2 && (day >= 16 && day <= 18)) return "설날 연휴";
+            if (month == 3 && day == 2) return "대체공휴일";
+            if (month == 5 && day == 24) return "부처님오신날";
+            if (month == 5 && day == 25) return "대체공휴일";
+            if (month == 8 && day == 17) return "대체공휴일";
+            if (month == 9 && (day >= 24 && day <= 26)) return "추석 연휴";
+            if (month == 9 && day == 28) return "대체공휴일";
+            if (month == 10 && day == 5) return "대체공휴일";
+        } else if (year == 2027) {
+            if (month == 2 && (day >= 6 && day <= 8)) return "설날 연휴";
+            if (month == 2 && day == 9) return "대체공휴일";
+            if (month == 5 && day == 13) return "부처님오신날";
+            if (month == 8 && day == 16) return "대체공휴일";
+            if (month == 9 && (day >= 14 && day <= 16)) return "추석 연휴";
+            if (month == 10 && day == 4) return "대체공휴일";
+            if (month == 10 && day == 11) return "대체공휴일";
+            if (month == 12 && day == 27) return "대체공휴일";
+        }
+
+        return null;
+    }
+
     // 특정 월의 법정 공휴일 (양력 + 음력/대체) Set 반환 (month: 1..12)
     public static Set<CalendarDay> getPublicHolidays(int year, int month) {
         Set<CalendarDay> holidays = new HashSet<>();

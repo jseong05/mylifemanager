@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 // 2sec 안에 누르면 앱이 종료됨.
                 if (System.currentTimeMillis() <= backKeyPressedTime + 2000) {
-                    finish();
+                    finishAffinity();
                 }
             }
         });
@@ -329,49 +329,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupDailyExpenseReminder() {
-        // 11/05
-        // 매일 밤 21:00 지출 미입력 체크 푸시 알림 반복 예약 (AlarmManager)
-        try {
-            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            Intent intent = new Intent(this, DailyExpenseAlarmReceiver.class);
-
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                    this,
-                    2001,
-                    intent,
-                    PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE
-            );
-
-            if (pendingIntent == null && alarmManager != null) {
-                Calendar calendar = Calendar.getInstance();
-                calendar.set(Calendar.HOUR_OF_DAY, 21);
-                calendar.set(Calendar.MINUTE, 0);
-                calendar.set(Calendar.SECOND, 0);
-
-                if (calendar.getTimeInMillis() <= System.currentTimeMillis()) {
-                    calendar.add(Calendar.DAY_OF_YEAR, 1);
-                }
-
-                PendingIntent newPendingIntent = PendingIntent.getBroadcast(
-                        this,
-                        2001,
-                        intent,
-                        PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
-                );
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    if (alarmManager.canScheduleExactAlarms()) {
-                        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), newPendingIntent);
-                    } else {
-                        alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), newPendingIntent);
-                    }
-                } else {
-                    alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), newPendingIntent);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        // 설정된 지출 미입력 리마인더 알림 예약 (기본: 21:00)
+        DailyExpenseAlarmReceiver.scheduleDailyReminder(this);
     }
 
     private boolean isScheduleOnDate(Schedule s, String targetDateText) {

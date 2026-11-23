@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/colorSurface"
-    android:fitsSystemWindows="true"
     tools:context=".ScheduleActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -52,24 +51,45 @@
                 app:mcv_showOtherDates="other_months" />
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- 실시간 일정 검색창 -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilSearchSchedule"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        <!-- 실시간 일정 검색창 및 필터 버튼 (...) -->
+        <LinearLayout
+            android:id="@+id/layoutSearchFilter"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:hint="@string/hint_search_schedule"
-            app:endIconMode="clear_text"
-            app:startIconDrawable="@android:drawable/ic_menu_search"
-            app:layout_constraintTop_toBottomOf="@id/cardCalendar">
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/cardCalendar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etSearchSchedule"
-                android:layout_width="match_parent"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilSearchSchedule"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:inputType="text" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_weight="1"
+                android:hint="@string/hint_search_schedule"
+                app:endIconMode="clear_text"
+                app:startIconDrawable="@android:drawable/ic_menu_search">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etSearchSchedule"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnScheduleFilter"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="48dp"
+                android:layout_height="56dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="8dp"
+                android:contentDescription="검색 필터"
+                app:icon="@android:drawable/ic_menu_manage"
+                app:iconTint="?attr/colorOnSurface" />
+        </LinearLayout>
 
         <!-- 빈 상태 (기본 숨김) -->
         <TextView
@@ -84,7 +104,7 @@
             android:textColor="?attr/colorOnSurface"
             android:textSize="14sp"
             android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@id/tilSearchSchedule" />
+            app:layout_constraintTop_toBottomOf="@id/layoutSearchFilter" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvScheduleList"
@@ -96,7 +116,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tilSearchSchedule"
+            app:layout_constraintTop_toBottomOf="@id/layoutSearchFilter"
             tools:listitem="@layout/item_schedule" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -122,6 +142,7 @@
         app:itemIconTint="?attr/colorOnSurface"
         app:itemTextColor="?attr/colorOnSurface"
         app:labelVisibilityMode="labeled"
+        app:itemActiveIndicatorStyle="@null"
         app:layout_constraintBottom_toBottomOf="parent"
         app:menu="@menu/bottom_nav_menu" />
 

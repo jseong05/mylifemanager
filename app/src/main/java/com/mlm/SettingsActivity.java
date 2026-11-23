@@ -6,10 +6,17 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.timepicker.MaterialTimePicker;
+import com.google.android.material.timepicker.TimeFormat;
 import com.mlm.databinding.ActivitySettingsBinding;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class SettingsActivity extends AppCompatActivity {
     private ActivitySettingsBinding binding;
@@ -20,6 +27,12 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivitySettingsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
+            return insets;
+        });
 
         //저장된 설정을 불러와서 화면에 체우기
         dataManager = new MyDataStore(this);
@@ -91,6 +104,40 @@ public class SettingsActivity extends AppCompatActivity {
             }
         }
 
+        // 지출 리마인더 알림 설정 세팅
+        boolean reminderEnabled = dataManager.getDailyReminderEnabled();
+        final int[] selectedReminderHour = {dataManager.getDailyReminderHour()};
+        final int[] selectedReminderMinute = {dataManager.getDailyReminderMinute()};
+
+        binding.switchDailyReminder.setChecked(reminderEnabled);
+        binding.layoutReminderTimeSelection.setVisibility(reminderEnabled ? View.VISIBLE : View.GONE);
+        binding.btnSelectReminderTime.setText(String.format(Locale.getDefault(), "알림 시각: %02d:%02d (클릭하여 변경)", selectedReminderHour[0], selectedReminderMinute[0]));
+
+        binding.switchDailyReminder.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            binding.layoutReminderTimeSelection.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+        });
+
+        binding.btnSelectReminderTime.setOnClickListener(v -> {
+            MaterialTimePicker timePicker = new MaterialTimePicker.Builder()
+                    .setTimeFormat(TimeFormat.CLOCK_12H)
+                    .setHour(selectedReminderHour[0])
+                    .setMinute(selectedReminderMinute[0])
+                    .setTitleText("지출 리마인더 알림 시각 선택")
+                    .build();
+
+            timePicker.addOnPositiveButtonClickListener(dialogView -> {
+                selectedReminderHour[0] = timePicker.getHour();
+                selectedReminderMinute[0] = timePicker.getMinute();
+                binding.btnSelectReminderTime.setText(String.format(Locale.getDefault(), "알림 시각: %02d:%02d (클릭하여 변경)", selectedReminderHour[0], selectedReminderMinute[0]));
+            });
+
+            timePicker.show(getSupportFragmentManager(), "DAILY_REMINDER_TIME_PICKER");
+        });
+
+        // 다크 모드 설정 세팅
+        boolean darkModeEnabled = dataManager.getDarkMode();
+        binding.switchDarkMode.setChecked(darkModeEnabled);
+
         binding.btnSaveSettings.setOnClickListener(v -> {
             String name = binding.etUserName.getText().toString().trim();
             String balanceStr = binding.etInitialBalance.getText().toString().trim();
@@ -120,6 +167,21 @@ public class SettingsActivity extends AppCompatActivity {
             dataManager.saveAllowanceDay(saveDay);
             dataManager.saveUseGps(saveUseGps);
             dataManager.saveWeatherCity(saveCity);
+
+            boolean saveReminderEnabled = binding.switchDailyReminder.isChecked();
+            dataManager.saveDailyReminderEnabled(saveReminderEnabled);
+            dataManager.saveDailyReminderTime(selectedReminderHour[0], selectedReminderMinute[0]);
+
+            boolean saveDarkMode = binding.switchDarkMode.isChecked();
+            dataManager.saveDarkMode(saveDarkMode);
+            if (saveDarkMode) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            }
+
+            // 지출 리마인더 알림 예약/갱신
+            DailyExpenseAlarmReceiver.scheduleDailyReminder(this);
 
             Toast.makeText(this, "설정이 저장되었습니다.", Toast.LENGTH_SHORT).show();
             finish();

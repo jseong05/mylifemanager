@@ -30,12 +30,13 @@
 
         <activity
             android:name=".MainActivity"
-            android:exported="false"
+                android:exported="false"
             android:theme="@style/Theme.마이라이프메니저"
             android:windowSoftInputMode="adjustResize" />
         <activity android:name=".ExpenseActivity" />
         <activity android:name=".ScheduleActivity" />
         <activity android:name=".SettingsActivity" />
+        <activity android:name=".OnboardingActivity" />
         <receiver android:name=".ScheduleAlarmReceiver" android:exported="false" />
         <receiver android:name=".DailyExpenseAlarmReceiver" android:exported="false" />
     </application>

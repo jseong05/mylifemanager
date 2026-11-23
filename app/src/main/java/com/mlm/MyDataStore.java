@@ -27,6 +27,11 @@ public class MyDataStore {
     private static final String KEY_USE_GPS = "use_gps_location";
     private static final String KEY_WEATHER_CITY = "weather_city";
     private static final String KEY_DATA_MIGRATED = "data_migrated_v2";
+    private static final String KEY_IS_FIRST_RUN = "is_first_run";
+    private static final String KEY_DAILY_REMINDER_HOUR = "daily_reminder_hour";
+    private static final String KEY_DAILY_REMINDER_MINUTE = "daily_reminder_minute";
+    private static final String KEY_DAILY_REMINDER_ENABLED = "daily_reminder_enabled";
+    private static final String KEY_DARK_MODE = "dark_mode_enabled";
 
     private SharedPreferences prefs;
     private Gson gson;
@@ -241,5 +246,43 @@ public class MyDataStore {
             }
         }
         return amount;
+    }
+
+    public boolean isFirstRun() {
+        return prefs.getBoolean(KEY_IS_FIRST_RUN, true);
+    }
+
+    public void setFirstRunCompleted() {
+        prefs.edit().putBoolean(KEY_IS_FIRST_RUN, false).apply();
+    }
+
+    public void saveDailyReminderTime(int hour, int minute) {
+        prefs.edit().putInt(KEY_DAILY_REMINDER_HOUR, hour)
+                    .putInt(KEY_DAILY_REMINDER_MINUTE, minute)
+                    .apply();
+    }
+
+    public int getDailyReminderHour() {
+        return prefs.getInt(KEY_DAILY_REMINDER_HOUR, 21);
+    }
+
+    public int getDailyReminderMinute() {
+        return prefs.getInt(KEY_DAILY_REMINDER_MINUTE, 0);
+    }
+
+    public void saveDailyReminderEnabled(boolean enabled) {
+        prefs.edit().putBoolean(KEY_DAILY_REMINDER_ENABLED, enabled).apply();
+    }
+
+    public boolean getDailyReminderEnabled() {
+        return prefs.getBoolean(KEY_DAILY_REMINDER_ENABLED, true);
+    }
+
+    public void saveDarkMode(boolean enabled) {
+        prefs.edit().putBoolean(KEY_DARK_MODE, enabled).apply();
+    }
+
+    public boolean getDarkMode() {
+        return prefs.getBoolean(KEY_DARK_MODE, false);
     }
 }

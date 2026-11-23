@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/colorSurface"
-    android:fitsSystemWindows="true"
     tools:context=".ExpenseActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -68,24 +67,45 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- 실시간 검색창 -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilSearchExpense"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        <!-- 실시간 검색창 및 필터 버튼 (...) -->
+        <LinearLayout
+            android:id="@+id/layoutExpenseSearchFilter"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:hint="@string/hint_search_expense"
-            app:endIconMode="clear_text"
-            app:startIconDrawable="@android:drawable/ic_menu_search"
-            app:layout_constraintTop_toBottomOf="@id/cvWasteReport">
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/cvWasteReport"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etSearchExpense"
-                android:layout_width="match_parent"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilSearchExpense"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:inputType="text" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_weight="1"
+                android:hint="@string/hint_search_expense"
+                app:endIconMode="clear_text"
+                app:startIconDrawable="@android:drawable/ic_menu_search">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etSearchExpense"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnExpenseFilter"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="48dp"
+                android:layout_height="56dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="8dp"
+                android:contentDescription="가계부 검색 필터"
+                app:icon="@android:drawable/ic_menu_manage"
+                app:iconTint="?attr/colorOnSurface" />
+        </LinearLayout>
 
         <!-- 빈 상태 (기본 숨김) -->
         <TextView
@@ -100,7 +120,7 @@
             android:textColor="?attr/colorOnSurface"
             android:textSize="14sp"
             android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@id/tilSearchExpense" />
+            app:layout_constraintTop_toBottomOf="@id/layoutExpenseSearchFilter" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvExpenseList"
@@ -112,7 +132,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tilSearchExpense"
+            app:layout_constraintTop_toBottomOf="@id/layoutExpenseSearchFilter"
             tools:listitem="@layout/item_expense" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -138,6 +158,7 @@
         app:itemIconTint="?attr/colorOnSurface"
         app:itemTextColor="?attr/colorOnSurface"
         app:labelVisibilityMode="labeled"
+        app:itemActiveIndicatorStyle="@null"
         app:layout_constraintBottom_toBottomOf="parent"
         app:menu="@menu/bottom_nav_menu" />
 

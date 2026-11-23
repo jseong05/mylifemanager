@@ -69,4 +69,14 @@ public class Schedule {
     public void setRepeatOption(String repeatOption) {
         this.repeatOption = repeatOption;
     }
+
+    private boolean isReadOnly = false;
+
+    public boolean isReadOnly() {
+        return isReadOnly;
+    }
+
+    public void setReadOnly(boolean readOnly) {
+        this.isReadOnly = readOnly;
+    }
 }

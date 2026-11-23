@@ -21,6 +21,14 @@ public class SplashActivity extends AppCompatActivity {
         binding = ActivitySplashBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        // 저장된 다크 모드 설정 적용
+        MyDataStore initDataStore = new MyDataStore(this);
+        if (initDataStore.getDarkMode()) {
+            androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES);
+        } else {
+            androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO);
+        }
+
         // 1. 중앙 로고 페이드인 & 줌 애니메이션
         binding.ivSplashLogo.setAlpha(0f);
         binding.ivSplashLogo.setScaleX(0.85f);
@@ -52,10 +60,11 @@ public class SplashActivity extends AppCompatActivity {
         };
         handler.postDelayed(typingRunnable, 350); // 0.35초 후 타이핑 시작
 
-        // 11/05
-        // 스플래시 화면 이탈 시 메인 화면이 백그라운드에서 강제 실행되지 않도록 Runnable 및 onDestroy 해제 추가
+        // 스플래시 화면 이탈 시 첫 실행 여부에 따라 온보딩(OnboardingActivity) 또는 메인(MainActivity) 이동
         navigateRunnable = () -> {
-            startActivity(new Intent(SplashActivity.this, MainActivity.class));
+            MyDataStore dataStore = new MyDataStore(SplashActivity.this);
+            Class<?> targetActivity = dataStore.isFirstRun() ? OnboardingActivity.class : MainActivity.class;
+            startActivity(new Intent(SplashActivity.this, targetActivity));
             finish();
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         };

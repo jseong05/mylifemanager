@@ -72,4 +72,61 @@ public class DailyExpenseAlarmReceiver extends BroadcastReceiver {
             }
         }
     }
+
+    public static void scheduleDailyReminder(Context context) {
+        try {
+            MyDataStore dataManager = new MyDataStore(context);
+            android.app.AlarmManager alarmManager = (android.app.AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+            Intent intent = new Intent(context, DailyExpenseAlarmReceiver.class);
+
+            PendingIntent existingIntent = PendingIntent.getBroadcast(
+                    context,
+                    2001,
+                    intent,
+                    PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE
+            );
+
+            if (existingIntent != null && alarmManager != null) {
+                alarmManager.cancel(existingIntent);
+                existingIntent.cancel();
+            }
+
+            if (!dataManager.getDailyReminderEnabled()) {
+                return;
+            }
+
+            int hour = dataManager.getDailyReminderHour();
+            int minute = dataManager.getDailyReminderMinute();
+
+            java.util.Calendar calendar = java.util.Calendar.getInstance();
+            calendar.set(java.util.Calendar.HOUR_OF_DAY, hour);
+            calendar.set(java.util.Calendar.MINUTE, minute);
+            calendar.set(java.util.Calendar.SECOND, 0);
+
+            if (calendar.getTimeInMillis() <= System.currentTimeMillis()) {
+                calendar.add(java.util.Calendar.DAY_OF_YEAR, 1);
+            }
+
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                    context,
+                    2001,
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+            );
+
+            if (alarmManager != null) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    if (alarmManager.canScheduleExactAlarms()) {
+                        alarmManager.setExactAndAllowWhileIdle(android.app.AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+                    } else {
+                        alarmManager.setAndAllowWhileIdle(android.app.AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+                    }
+                } else {
+                    alarmManager.setExactAndAllowWhileIdle(android.app.AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
