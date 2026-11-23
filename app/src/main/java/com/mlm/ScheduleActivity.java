@@ -115,6 +115,7 @@ public class ScheduleActivity extends AppCompatActivity {
         // 오늘 날짜 일정 로딩 및 캘린더 이벤트 점(Dot) 갱신
         filterSchedulesByDate(selectedDate);
         updateCalendarEvents();
+        refreshAllScheduleAlarms(); // 다중 알람 누락 방지 재등록 보장
 
         // 필터 버튼 클릭 리스너
         binding.btnScheduleFilter.setOnClickListener(v -> showScheduleFilterDialog());
@@ -201,21 +202,25 @@ public class ScheduleActivity extends AppCompatActivity {
             return false;
         }
 
-        String startDateText = s.getDate();
+        String startDateText = s.getDate().trim();
+        if (startDateText.length() > 10) startDateText = startDateText.substring(0, 10);
+        String normTargetDate = targetDateText.trim();
+        if (normTargetDate.length() > 10) normTargetDate = normTargetDate.substring(0, 10);
+
         // 등록된 날짜 이전 날짜에는 표시하지 않음
-        if (startDateText.compareTo(targetDateText) > 0) {
+        if (startDateText.compareTo(normTargetDate) > 0) {
             return false;
         }
 
         String repeat = s.getRepeatOption();
         if ("NONE".equalsIgnoreCase(repeat)) {
-            return startDateText.equals(targetDateText);
+            return startDateText.equals(normTargetDate);
         }
 
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
             Date startDate = sdf.parse(startDateText);
-            Date targetDate = sdf.parse(targetDateText);
+            Date targetDate = sdf.parse(normTargetDate);
 
             if (startDate == null || targetDate == null) return false;
 
@@ -681,6 +686,18 @@ public class ScheduleActivity extends AppCompatActivity {
             return String.format(Locale.getDefault(), "알람 설정: 일정 %d시간 전 알림", h);
         } else {
             return String.format(Locale.getDefault(), "알람 설정: 일정 %d분 전 알림", m);
+        }
+    }
+
+    private void refreshAllScheduleAlarms() {
+        List<Schedule> all = dataManager.getSchedules();
+        if (all != null) {
+            String todayStr = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+            for (Schedule s : all) {
+                if (!s.isCompleted() && s.getDate() != null && s.getDate().compareTo(todayStr) >= 0) {
+                    setScheduleAlarm(s.getId(), s.getTodo(), s.getDate(), s.getWhen(), s.getAlarmMinutesBefore());
+                }
+            }
         }
     }
 

@@ -61,7 +61,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         // Load existing settings
         binding.etUserName.setText(dataManager.getUserName());
-        binding.etInitialBalance.setText(String.valueOf(dataManager.getInitialBalance()));
+        binding.etInitialBalance.setText(String.valueOf(dataManager.totalMoneyNow()));
         binding.etAllowanceAmount.setText(String.valueOf(dataManager.getAllowanceAmount()));
 
         String cycle = dataManager.getAllowanceCycle();
@@ -148,7 +148,10 @@ public class SettingsActivity extends AppCompatActivity {
                 return;
             }
 
-            int balance = Integer.parseInt(balanceStr);
+            int newCurrentBalance = Integer.parseInt(balanceStr);
+            int currentNet = dataManager.totalMoneyNow() - dataManager.getInitialBalance();
+            int newInitialBalance = newCurrentBalance - currentNet;
+
             int allowance = allowanceStr.isEmpty() ? 0 : Integer.parseInt(allowanceStr);
 
             boolean isWeekly = binding.rbWeekly.isChecked();
@@ -161,7 +164,7 @@ public class SettingsActivity extends AppCompatActivity {
             String saveCity = (cityPos >= 0 && cityPos < cityArray.length) ? cityArray[cityPos] : "Seoul";
 
             dataManager.saveUserName(name);
-            dataManager.saveFirstMoney(balance);
+            dataManager.saveFirstMoney(newInitialBalance);
             dataManager.saveAllowanceAmount(allowance);
             dataManager.saveAllowanceCycle(saveCycle);
             dataManager.saveAllowanceDay(saveDay);

@@ -338,7 +338,11 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
 
-        String startDateText = s.getDate();
+        String startDateText = s.getDate().trim();
+        if (startDateText.length() > 10) startDateText = startDateText.substring(0, 10);
+        targetDateText = targetDateText.trim();
+        if (targetDateText.length() > 10) targetDateText = targetDateText.substring(0, 10);
+
         if (startDateText.compareTo(targetDateText) > 0) {
             return false;
         }

@@ -71,6 +71,9 @@ public class DailyExpenseAlarmReceiver extends BroadcastReceiver {
                 notificationManager.notify(3001, builder.build());
             }
         }
+
+        // 다음 날에도 지출 기록을 확인하도록 재예약
+        scheduleDailyReminder(context);
     }
 
     public static void scheduleDailyReminder(Context context) {
