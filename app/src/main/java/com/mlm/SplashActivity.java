@@ -8,11 +8,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.mlm.databinding.ActivitySplashBinding;
 import java.util.Random;
 
-/**
- * [기술 설명 / 면접 준비 주석]
- * - 앱 시작 시 브랜드 로고 애니메이션과 랜덤 명언 타이핑 효과를 보여주는 스플래시 화면입니다.
- * - 최초 실행 여부(isFirstRun)를 체크하여 온보딩(OnboardingActivity) 또는 대시보드(MainActivity)로 라우팅합니다.
- */
+// 앱 시작 시 로고 애니메이션과 무작위 명언 타이핑 효과를 보여주는 스플래시 화면.
+// 첫 실행 여부(isFirstRun)에 따라 온보딩 또는 메인 화면으로 자동 이동합니다.
 public class SplashActivity extends AppCompatActivity {
 
     private ActivitySplashBinding binding;

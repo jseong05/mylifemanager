@@ -18,11 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * [기술 설명 / 면접 준비 주석]
- * - 사용자 프로필, 초기 잔액, 용돈 주비/금액, GPS/도시 날씨 설정, 다크 모드 및 매일 밤 지출 리마인더 알림 시각을 설정하는 화면입니다.
- * - MaterialTimePicker를 활용하여 직관적인 시간 선택 기능을 제공하며, 설정 저장 시 대시보드 잔액 및 알람을 즉시 동기화합니다.
- */
+// 사용자 프로필, 초기 잔액, 용돈 주기, 날씨/GPS 설정, 다크 모드, 지출 리마인더 알림 시각을 관리하는 화면.
+// MaterialTimePicker로 알림 시각을 선택하고, 저장 시 대시보드 잔액과 알람을 즉시 동기화합니다.
 public class SettingsActivity extends AppCompatActivity {
     private ActivitySettingsBinding binding;
     private MyDataStore dataManager;

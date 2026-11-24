@@ -59,20 +59,17 @@
 app/
 ├── src/main/
 │   ├── java/com/mlm/
-│   │   ├── MainActivity.java                 # 대시보드
-│   │   ├── SplashActivity.java               # 스플래시 화면
-│   │   ├── ExpenseActivity.java               # 가계부
-│   │   ├── ScheduleActivity.java              # 계획표와 달력
-│   │   ├── SettingsActivity.java              # 앱 설정
-│   │   ├── Expense.java                       # 가계부 데이터 모델
-│   │   ├── Schedule.java                      # 일정 데이터 모델
-│   │   ├── ExpenseAdapter.java                # 가계부 목록 어댑터
-│   │   ├── ScheduleAdapter.java               # 일정 목록 어댑터
+│   │   ├── MainActivity.java                 # 대시보드 (오늘 권장 지출액 계산 & 날씨)
+│   │   ├── SplashActivity.java               # 스플래시 화면 및 로고 애니메이션
+│   │   ├── OnboardingActivity.java           # 첫 실행 프로필/자산 설정 온보딩
+│   │   ├── ExpenseActivity.java               # 가계부 및 낭비 챌린지 상세 관리
+│   │   ├── ScheduleActivity.java              # 달력 (토/일/공휴일/도트) 및 일정 관리
+│   │   ├── SettingsActivity.java              # 앱 설정 (다크모드, 알림 시각, 잔액 동기화)
 │   │   ├── MyDataStore.java                   # SharedPreferences/Gson 데이터 관리
-│   │   ├── WeatherClient.java                 # 날씨 API 클라이언트
-│   │   ├── WeatherResponse.java               # 날씨 API 응답 모델
-│   │   ├── ScheduleAlarmReceiver.java         # 일정 알림 처리
-│   │   └── DailyExpenseAlarmReceiver.java     # 지출 리마인더 처리
+│   │   ├── HolidayCalculator.java             # 오프라인 공휴일 자동 계산기
+│   │   ├── WeatherClient.java                 # OpenWeatherMap 날씨 API 클라이언트
+│   │   ├── ScheduleAlarmReceiver.java         # 일정 푸시 알림 처리
+│   │   └── DailyExpenseAlarmReceiver.java     # 지출 리마인더 자동 재예약 알림 처리
 │   └── res/
 │       ├── layout/                            # 화면 및 목록 레이아웃
 │       ├── menu/                              # 하단 내비게이션 메뉴
@@ -80,6 +77,17 @@ app/
 ├── src/test/                                  # 로컬 단위 테스트
 └── src/androidTest/                           # Android 기기 테스트
 ```
+
+## 🏗️ 핵심 클래스 및 기술 구조 (Architecture Overview)
+
+- **`MainActivity`**: 앱의 대시보드 화면. 현재 잔액 및 용돈 지급일 D-Day를 기반으로 '오늘의 권장 지출액'을 실시간 계산하고, GPS/OpenWeatherMap 실시간 날씨 정보를 연동합니다.
+- **`ExpenseActivity`**: 가계부 내역(지출/수입) 관리 화면. 낭비 챌린지 지출 집계, 키워드 실시간 검색 및 다중 상세 필터링(거래 유형, 낭비 여부, 월별, 금액순 정렬)을 제공합니다.
+- **`ScheduleActivity`**: 달력 및 일정 관리 화면. `MaterialCalendarView` 4~6주 동적 가변 달력 연동, 토/일/공휴일 커스텀 데코레이터 및 공휴일 읽기 전용(Read-Only) 처리, 통합 검색/필터를 제공합니다.
+- **`SettingsActivity`**: 사용자 프로필, 용돈 주기, GPS/도시 날씨, 다크 모드 수동 전환, `MaterialTimePicker` 지출 리마인더 알림 시각 설정 및 데이터 동기화를 처리합니다.
+- **`OnboardingActivity`**: 앱 최초 실행 시 `ViewPager2`와 커스텀 동그라미 도트 인디케이터를 사용해 프로필 및 초기 자산을 세팅하는 온보딩 마법사입니다.
+- **`MyDataStore`**: `SharedPreferences`와 `Gson`을 활용하여 앱 데이터를 JSON 직렬화 방식으로 안전하게 저장하고 로드하는 로컬 데이터 관리 클래스입니다.
+- **`HolidayCalculator`**: 오프라인에서 대한민국 8대 양력 고정 공휴일, 음력 명절 및 대체공휴일을 0.001초 만에 자동 계산하는 클래스입니다.
+- **`DailyExpenseAlarmReceiver` & `ScheduleAlarmReceiver`**: `AlarmManager`와 연동하여 정시 알림을 발송하고, 지출 리마인더 알림이 매일 반복되도록 자동 재예약합니다.
 
 ## 🚀 빌드 및 실행
 

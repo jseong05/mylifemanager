@@ -8,10 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.mlm.databinding.ItemScheduleBinding;
 import java.util.List;
 
-/**
- * [기술 설명 / 면접 준비 주석]
- * - 일정 목록(RecyclerView)의 데이터를 아이템 뷰(item_schedule.xml)에 바인딩하며, 12시간제(오전/오후) 시간 포맷팅 및 읽기 전용(공휴일) 항목의 디자인과 체킹을 제어하는 어댑터입니다.
- */
+// 일정 리사이클러뷰 목록에 일정 내역을 바인딩하며, AM/PM 12시간제 변환 및 읽기 전용 공휴일 항목을 제어하는 어댑터.
 public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.ScheduleViewHolder> {
 
     private List<Schedule> scheduleList;

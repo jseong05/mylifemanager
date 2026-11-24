@@ -6,11 +6,8 @@ import org.threeten.bp.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * [기술 설명 / 면접 준비 주석]
- * - 이 클래스는 외부 API 키 없이도 대한민국 법정 공휴일(양력 고정 8대 공휴일, 음력 명절 및 대체공휴일)과 주말(토/일)을 오프라인에서 0.001초 만에 자동 계산하는 클래스입니다.
- * - CalendarDay의 1-based Month(1~12) 규칙에 맞춰 ThreetenABP의 LocalDate를 사용해 월 인덱스 오류 없이 정교하게 공휴일을 추출합니다.
- */
+// 오프라인에서 대한민국 법정 공휴일(양력 8대 공휴일, 음력 명절, 대체공휴일)과 주말을 자동 계산하는 클래스.
+// ThreetenABP LocalDate(1~12월)를 사용해 오프라인에서도 0.001초 만에 공휴일을 판별합니다.
 public class HolidayCalculator {
 
     // 대한민국 양력 고정 공휴일 판별 (month: 1..12)

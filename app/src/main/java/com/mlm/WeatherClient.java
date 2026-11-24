@@ -11,10 +11,7 @@ import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-/**
- * [기술 설명 / 면접 준비 주석]
- * - OpenWeatherMap API와 HttpURLConnection, ExecutorService(워커 스레드)를 사용해 도시 이름 또는 GPS 위도/경도로 실시간 날씨를 비동기 조회하는 네트워크 클라이언트입니다.
- */
+// OpenWeatherMap API를 사용하여 도시 이름 또는 GPS 위도/경도로 실시간 날씨를 가져오는 네트워크 클라이언트.
 public class WeatherClient {
     private static final String API_KEY = BuildConfig.WEATHER_API_KEY;
 

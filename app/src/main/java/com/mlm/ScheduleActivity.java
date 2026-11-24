@@ -40,6 +40,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
+// 달력과 일정을 관리하는 화면.
+// MaterialCalendarView 달력과 데코레이터(토/일/공휴일/도트)를 연동하고,
+// 일정 추가·수정·삭제, 알람 예약, 키워드 검색 및 다중 필터링을 처리합니다.
 public class ScheduleActivity extends AppCompatActivity {
     private ActivityScheduleBinding binding;
     private MyDataStore dataManager;

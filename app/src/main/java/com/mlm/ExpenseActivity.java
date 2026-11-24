@@ -23,11 +23,8 @@ import androidx.core.view.WindowInsetsCompat;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * [기술 설명 / 면접 준비 주석]
- * - 가계부(수입 및 지출 내역) 관리 화면입니다.
- * - 지출 및 수입 항목 등록, '낭비 챌린지' 지출 집계, 실시간 키워드 검색 및 다중 상세 필터링(거래 유형, 낭비 여부, 월별, 정렬)을 처리합니다.
- */
+// 가계부 내역(지출/수입)을 관리하는 화면.
+// 내역 추가·수정·삭제, 낭비 지출 집계, 키워드 검색 및 상세 필터링(유형, 낭비, 월별, 정렬)을 처리합니다.
 public class ExpenseActivity extends AppCompatActivity {
     private ActivityExpenseBinding binding;
     private MyDataStore dataManager;

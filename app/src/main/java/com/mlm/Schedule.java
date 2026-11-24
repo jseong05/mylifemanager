@@ -4,11 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-/**
- * [기술 설명 / 면접 준비 주석]
- * - 일정 항목을 나타내는 데이터 모델 클래스입니다.
- * - 고유 ID, 일정 제목(todo), 시각(when), 완료 여부(isCompleted), 알람 사전 알림 분(alarmMinutesBefore), 등록 날짜(date), 반복 옵션(repeatOption), 읽기 전용 여부(isReadOnly)를 보관합니다.
- */
+// 일정 하나를 나타내는 데이터 모델 클래스 (ID, 제목, 시각, 완료여부, 사전알림분, 날짜, 반복옵션, 읽기전용).
 public class Schedule {
     private String id;
     private String todo;
