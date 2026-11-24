@@ -26,6 +26,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * [기술 설명 / 면접 준비 주석]
+ * - 앱의 중심인 스마트 대시보드 화면입니다.
+ * - 현재 잔액과 남은 D-Day(용돈 받는 날)를 기반으로 '오늘의 권장 지출액'을 실시간으로 계산하여 표시합니다.
+ * - OpenWeatherMap API 및 LocationManager(GPS)를 통한 날씨 정보와 오늘 일정/최근 지출 내역을 요약 제공합니다.
+ */
 public class MainActivity extends AppCompatActivity {
 
     private long backKeyPressedTime = 0; // 10/23 뒤로가기 버튼 누른 시각 저장

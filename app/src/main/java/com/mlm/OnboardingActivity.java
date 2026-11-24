@@ -7,6 +7,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 import com.mlm.databinding.ActivityOnboardingBinding;
 
+/**
+ * [기술 설명 / 면접 준비 주석]
+ * - 앱 최초 실행 시 4단계 슬라이드를 통해 서비스 소개 및 초기 프로필/자산을 세팅하는 온보딩 마법사 화면입니다.
+ * - ViewPager2와 커스텀 동그라미 도트 인디케이터를 사용하며, 입력받은 프로필 정보를 MyDataStore에 저장 후 첫 실행 상태를 완료 처리합니다.
+ */
 public class OnboardingActivity extends AppCompatActivity {
 
     private ActivityOnboardingBinding binding;

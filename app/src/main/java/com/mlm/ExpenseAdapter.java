@@ -10,6 +10,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * [기술 설명 / 면접 준비 주석]
+ * - 가계부 목록(RecyclerView)의 데이터를 아이템 뷰(item_expense.xml)에 바인딩하고 스와이프 삭제 및 클릭 수정 이벤트를 처리하는 어댑터입니다.
+ */
 public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseViewHolder> {
 
     private List<Expense> expenseList;

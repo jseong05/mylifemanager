@@ -10,6 +10,10 @@ import android.content.Intent;
 import android.os.Build;
 import androidx.core.app.NotificationCompat;
 
+/**
+ * [기술 설명 / 면접 준비 주석]
+ * - 등록된 일정이 정해진 시각(또는 미리 알림 시각)이 되었을 때 AlarmManager로부터 신호를 받아 푸시 알림(Notification)을 생성해 띄워주는 BroadcastReceiver입니다.
+ */
 public class ScheduleAlarmReceiver extends BroadcastReceiver {
     public static final String CHANNEL_ID = "mlm_schedule_channel";
     public static final String EXTRA_TITLE = "extra_title";

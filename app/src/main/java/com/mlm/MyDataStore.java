@@ -14,8 +14,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+/**
+ * [기술 설명 / 면접 준비 주석]
+ * - 이 클래스는 앱이 종료되어도 사용자의 지출, 일정, 프로필 설정이 삭제되지 않도록 디바이스 내부 저장소에 데이터를 보관하는 역할을 합니다.
+ * - Android의 SharedPreferences를 사용하여 키-값(Key-Value) 쌍으로 데이터를 관리하며,
+ * - 지출(Expense)이나 일정(Schedule) 같은 객체 리스트는 Gson 라이브러리를 통해 JSON 텍스트로 변환(직렬화)하여 저장하고 불러옵니다.
+ */
 public class MyDataStore {
-    // 클래스 이름 MyDataStore로 바꿈.. 대충 데이터 저장하는 곳임
     private static final String PREF_NAME = "MLM_Prefs";
     private static final String KEY_USER_NAME = "user_name";
     private static final String KEY_INITIAL_BALANCE = "initial_balance";

@@ -294,7 +294,7 @@ public class ScheduleActivity extends AppCompatActivity {
                 int maxDays = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
 
                 for (int d = 1; d <= maxDays; d++) {
-                    String targetDateText = String.format(Locale.getDefault(), "%04d-%02d-%02d", year, month + 1, d);
+                    String targetDateText = String.format(Locale.getDefault(), "%04d-%02d-%02d", year, month, d);
                     for (Schedule s : allSchedules) {
                         if (isScheduleOnDate(s, targetDateText)) {
                             try {
